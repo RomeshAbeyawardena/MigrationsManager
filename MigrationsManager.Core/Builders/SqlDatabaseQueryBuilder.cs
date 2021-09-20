@@ -11,14 +11,18 @@ namespace MigrationsManager.Core.Builders
     {
         public string Name => "Sql";
 
-        public string ColumnExists(ITableConfiguration tableConfiguration)
+        public string ColumnExists(ITableConfiguration tableConfiguration, string columnName)
         {
-            throw new NotImplementedException();
+            return $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS " +
+                $"WHERE table_name = '{tableConfiguration.TableName}' " +
+                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}' AND column_name = '{columnName}'";
         }
 
         public string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn)
         {
-            throw new NotImplementedException();
+            var queryBuilder = new StringBuilder($"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]");
+            queryBuilder.AppendLine($"ADD COLUMN [{dataColumn.Name}] {dataColumn.Type}");
+            return queryBuilder.ToString();
         }
 
         public string CreateTable(ITableConfiguration tableConfiguration, IEnumerable<IDataColumn> dataColumns)
@@ -34,7 +38,7 @@ namespace MigrationsManager.Core.Builders
                     queryBuilder.AppendLine($"\tCONSTRAINT PK_{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}");
                 }
 
-                if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue))
+                if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue?.ToString()))
                 {
                     queryBuilder.AppendLine($"\tCONSTRAINT DF_{tableConfiguration.TableName}_{dataColumn} DEFAULT {dataColumn.DefaultValue}");
                 }
@@ -47,12 +51,14 @@ namespace MigrationsManager.Core.Builders
 
         public string DropField(ITableConfiguration tableConfiguration, IDataColumn dataColumn)
         {
-            throw new NotImplementedException();
+            var queryBuilder = new StringBuilder($"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]");
+            queryBuilder.AppendLine($"DROP COLUMN [{dataColumn.Name}]");
+            return queryBuilder.ToString();
         }
 
-        public string DropTable(ITableConfiguration tableConfiguration, IDataColumn dataColumn)
+        public string DropTable(ITableConfiguration tableConfiguration)
         {
-            throw new NotImplementedException();
+            return $"DROP TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}]";
         }
 
         public string TableExists(ITableConfiguration tableConfiguration)

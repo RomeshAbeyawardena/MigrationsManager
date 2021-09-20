@@ -12,8 +12,8 @@ namespace MigrationsManager.Shared.Contracts
         string CreateTable(ITableConfiguration tableConfiguration, IEnumerable<IDataColumn> dataColumns);
         string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn);
         string DropField(ITableConfiguration tableConfiguration, IDataColumn dataColumn);
-        string DropTable(ITableConfiguration tableConfiguration, IDataColumn dataColumn);
+        string DropTable(ITableConfiguration tableConfiguration);
         string TableExists(ITableConfiguration tableConfiguration);
-        string ColumnExists(ITableConfiguration tableConfiguration); 
+        string ColumnExists(ITableConfiguration tableConfiguration, string columnName); 
     }
 }

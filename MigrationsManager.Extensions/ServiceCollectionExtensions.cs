@@ -15,13 +15,30 @@ namespace MigrationsManager.Extensions
         public static IServiceCollection AddMigrationServices(IServiceCollection services)
         {
             return services.Scan(s => s.FromAssembliesOf(typeof(This))
-                .AddClasses(a => a.WithAttribute<RegisterServiceAttribute>())
-                .AsImplementedInterfaces());
+                .AddClasses(a => a.WithAttribute<RegisterServiceAttribute>(rsa => rsa.ServiceLifetime == ServiceLifetime.Singleton))
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+                .AddClasses(a => a.WithAttribute<RegisterServiceAttribute>(rsa => rsa.ServiceLifetime == ServiceLifetime.Scoped))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+                .AddClasses(a => a.WithAttribute<RegisterServiceAttribute>(rsa => rsa.ServiceLifetime == ServiceLifetime.Transient))
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
         }
 
         public static IServiceCollection AddMigration(IServiceCollection service, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
         {
-            return service.AddScoped(a => build(a, a.GetRequiredService<IMigrationConfigurator>()));
+            return service.AddScoped(s => ConfigureMigration(s, migrationName, build));
+        }
+
+        public static IMigrationOptions ConfigureMigration(IServiceProvider serviceProvider, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
+        {
+
+            var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
+            var migrationConfigurator = serviceProvider.GetRequiredService<IMigrationConfigurator>();
+            var migrationOptions = build(serviceProvider, migrationConfigurator);
+            migrationManager.Add(migrationName, migrationOptions);
+            return migrationOptions;
         }
     }
 }

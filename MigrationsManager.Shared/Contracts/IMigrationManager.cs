@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Contracts
 {
-    public interface IMigrationManager : IProducerConsumerCollection<Func<IServiceProvider, IMigrationOptions>>
+    public interface IMigrationManager : IProducerConsumerCollection<IMigrationOptions>
     {
-        IMigrationOptions GetMigrationOptions(string name, IServiceProvider serviceProvider);
-        void Add(string name, Func<IServiceProvider, IMigrationOptions> migrationOptions);
+        IMigrationOptions GetMigrationOptions(string name);
+        void Add(string name, IMigrationOptions migrationOptions);
     }
 }

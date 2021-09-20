@@ -13,16 +13,16 @@ namespace MigrationsManager.Core.Defaults
     [RegisterService]
     public class DefaultMigrationManager : IMigrationManager
     {
-        private readonly Dictionary<string, Func<IServiceProvider, IMigrationOptions>> migrationOptionsDictionary;
-        private ConcurrentQueue<Func<IServiceProvider, IMigrationOptions>> migrations;
+        private readonly Dictionary<string, IMigrationOptions> migrationOptionsDictionary;
+        private ConcurrentQueue<IMigrationOptions> migrations;
         private bool isReadOnly;
-        private ConcurrentQueue<Func<IServiceProvider, IMigrationOptions>> Migrations 
+        private ConcurrentQueue<IMigrationOptions> Migrations 
         { 
             get 
             {
                 if (migrations == null)
                 {
-                    migrations = new ConcurrentQueue<Func<IServiceProvider, IMigrationOptions>>(migrationOptionsDictionary.ToArray().Select(a => a.Value));
+                    migrations = new ConcurrentQueue<IMigrationOptions>(migrationOptionsDictionary.ToArray().Select(a => a.Value));
                     isReadOnly = true;
                 }
                 return migrations; 
@@ -35,7 +35,7 @@ namespace MigrationsManager.Core.Defaults
 
         public object SyncRoot => new object();
 
-        public void Add(string name, Func<IServiceProvider, IMigrationOptions> migrationOptions)
+        public void Add(string name, IMigrationOptions migrationOptions)
         {
             if (!isReadOnly)
             {
@@ -46,37 +46,37 @@ namespace MigrationsManager.Core.Defaults
         }
 
 
-        public IMigrationOptions GetMigrationOptions(string name, IServiceProvider service)
+        public IMigrationOptions GetMigrationOptions(string name)
         {
             if(migrationOptionsDictionary.TryGetValue(name, out var options))
             {
-                return options?.Invoke(service);
+                return options;
             }
 
             return null;
         }
 
-        public void CopyTo(Func<IServiceProvider, IMigrationOptions>[] array, int index)
+        public void CopyTo(IMigrationOptions[] array, int index)
         {
             throw new NotSupportedException();
         }
 
-        public Func<IServiceProvider, IMigrationOptions>[] ToArray()
+        public IMigrationOptions[] ToArray()
         {
             return Migrations.ToArray();
         }
 
-        public bool TryAdd(Func<IServiceProvider, IMigrationOptions> item)
+        public bool TryAdd(IMigrationOptions item)
         {
             throw new NotSupportedException();
         }
 
-        public bool TryTake(out Func<IServiceProvider, IMigrationOptions> item)
+        public bool TryTake(out IMigrationOptions item)
         {
             return Migrations.TryDequeue(out item);
         }
 
-        public IEnumerator<Func<IServiceProvider, IMigrationOptions>> GetEnumerator()
+        public IEnumerator<IMigrationOptions> GetEnumerator()
         {
             return Migrations.GetEnumerator();
         }
