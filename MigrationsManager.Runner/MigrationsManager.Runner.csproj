@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MigrationsManager.Core\MigrationsManager.Core.csproj" />
+    <ProjectReference Include="..\MigrationsManager.Extensions\MigrationsManager.Extensions.csproj" />
+    <ProjectReference Include="..\MigrationsManager.Scanner\MigrationsManager.Scanner.csproj" />
+    <ProjectReference Include="..\MigrationsManager.Shared\MigrationsManager.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
