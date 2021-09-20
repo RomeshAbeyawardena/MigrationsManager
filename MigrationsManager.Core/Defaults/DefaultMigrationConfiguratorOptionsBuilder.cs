@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Shared.Defaults
+namespace MigrationsManager.Core.Defaults
 {
     /// <inheritdoc cref="IMigrationConfiguratorOptionsBuilder"/>
     public class DefaultMigrationConfiguratorOptionsBuilder : IMigrationConfiguratorOptionsBuilder
@@ -75,16 +76,16 @@ namespace MigrationsManager.Shared.Defaults
 
         public IMigrationOptions Build()
         {
-            var migrationOptions = new MigrationOptions(types, tableConfiguration);
+            var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration);
             foreach(var type in types)
             {
                 var tableAttribute = type.GetCustomAttribute<TableAttribute>();
 
-                var tableConfiguration = new TableConfiguration(type.Name, defaultSchema);
+                var tableConfiguration = new DefaultTableConfiguration(type.Name, defaultSchema);
 
                 if (tableAttribute != null)
                 {
-                    tableConfiguration = new TableConfiguration(tableAttribute.Schema, tableAttribute.Name);
+                    tableConfiguration = new DefaultTableConfiguration(tableAttribute.Schema, tableAttribute.Name);
                 }
 
                 var keyAttribute = type.GetCustomAttribute<KeyAttribute>();
@@ -103,6 +104,11 @@ namespace MigrationsManager.Shared.Defaults
         {
             defaultSchema = schemaName;
             return this;
+        }
+
+        public IMigrationConfiguratorOptionsBuilder ConfigureDbConnectionFactory(Func<IServiceProvider, IDbConnection> connectionFactory)
+        {
+            throw new NotImplementedException();
         }
     }
 }

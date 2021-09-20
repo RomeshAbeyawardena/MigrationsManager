@@ -3,5 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Scrutor" Version="3.3.0"></PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MigrationsManager.Core\MigrationsManager.Core.csproj" />
+    <ProjectReference Include="..\MigrationsManager.Shared\MigrationsManager.Shared.csproj" />
+  </ItemGroup>
 
 </Project>

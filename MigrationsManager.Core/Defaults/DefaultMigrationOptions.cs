@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace MigrationsManager.Shared
+namespace MigrationsManager.Core.Defaults
 {
-    public class MigrationOptions : IMigrationOptions
+    public class DefaultMigrationOptions : IMigrationOptions
     {
-        internal MigrationOptions(IEnumerable<Type> types, IDictionary<Type, ITableConfiguration> tableConfiguration)
+        internal DefaultMigrationOptions(IEnumerable<Type> types, IDictionary<Type, ITableConfiguration> tableConfiguration)
         {
             Types = types;
             TableConfiguration = tableConfiguration;

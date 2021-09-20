@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Shared
+namespace MigrationsManager.Core.Defaults
 {
-    public class TableConfiguration : ITableConfiguration
+    public class DefaultTableConfiguration : ITableConfiguration
     {
         public string PrimaryKey { get; set; }
         public string TableName { get; }
         public string Schema { get; }
 
-        internal TableConfiguration(string tableName, string schema)
+        internal DefaultTableConfiguration(string tableName, string schema)
         {
             TableName = tableName;
             Schema = schema;
