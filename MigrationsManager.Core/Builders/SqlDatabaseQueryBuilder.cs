@@ -27,11 +27,20 @@ namespace MigrationsManager.Core.Builders
 
             foreach (var dataColumn in dataColumns)
             {
-                
-                queryBuilder.Append($",[{dataColumn.Name}] {dataColumn.Type}");
+                queryBuilder.AppendLine($",[{dataColumn.Name}] {dataColumn.Type}");
+
+                if (tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    queryBuilder.AppendLine($"\tCONSTRAINT PK_{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue))
+                {
+                    queryBuilder.AppendLine($"\tCONSTRAINT DF_{tableConfiguration.TableName}_{dataColumn} DEFAULT {dataColumn.DefaultValue}");
+                }
             }
 
-            queryBuilder.Append($")");
+            queryBuilder.AppendLine($")");
 
             return queryBuilder.ToString();
         }

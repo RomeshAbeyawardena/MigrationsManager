@@ -10,5 +10,6 @@ namespace MigrationsManager.Shared.Contracts
     {
         string Name { get; set; }
         string Type { get; set; }
+        string DefaultValue { get; set; }
     }
 }
