@@ -1,6 +1,5 @@
 ﻿using MigrationsManager.Core.Defaults;
 using MigrationsManager.Shared.Contracts;
-using System;
 using System.Collections.Generic;
 
 namespace MigrationsManager.Extensions

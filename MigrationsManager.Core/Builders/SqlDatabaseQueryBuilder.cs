@@ -1,10 +1,10 @@
 ﻿using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Contracts.Builders;
+using MigrationsManager.Shared.Contracts.Factories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Builders
 {

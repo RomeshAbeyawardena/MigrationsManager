@@ -4,11 +4,8 @@ using MigrationsManager.Core.Defaults;
 using MigrationsManager.Core.Defaults.Builders;
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Contracts.Builders;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MigrationsManager.Extensions
 {

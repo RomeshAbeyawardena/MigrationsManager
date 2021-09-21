@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MigrationsManager.Shared.Extensions;
+﻿using MigrationsManager.Shared.Extensions;
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using System;
@@ -7,21 +6,17 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults
 {
     [RegisterService]
     public class DefaultMigrationManager : IMigrationManager
     {
-        public DefaultMigrationManager(IServiceProvider serviceProvider)
+        public DefaultMigrationManager(IEnumerable<IKeyValuePair<string, IMigrationOptions>> migrationOptionPairs)
         {
-            var s = serviceProvider
-                .GetRequiredService<IEnumerable<IKeyValuePair<string, IMigrationOptions>>>();
-
+            
             migrationOptionsDictionary = new Dictionary<string, IMigrationOptions>();
-            migrationOptionsDictionary.AddRange(s);
+            migrationOptionsDictionary.AddRange(migrationOptionPairs);
         }
 
         private readonly Dictionary<string, IMigrationOptions> migrationOptionsDictionary;

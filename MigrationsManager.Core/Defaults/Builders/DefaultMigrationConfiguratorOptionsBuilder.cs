@@ -1,5 +1,6 @@
 ﻿using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Extensions;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults.Builders
 {

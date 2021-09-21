@@ -1,9 +1,6 @@
 ﻿using MigrationsManager.Shared.Contracts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults
 {
@@ -23,12 +20,17 @@ namespace MigrationsManager.Core.Defaults
 
         public string GetType(Type type)
         {
-            throw new NotImplementedException();
+            if(definitions.TryGetValue(type, out var value))
+            {
+                return value;
+            }
+
+            throw new NullReferenceException();
         }
 
         public string GetType(string type)
         {
-            throw new NotImplementedException();
+            return GetType(Type.GetType(type));
         }
     }
 }

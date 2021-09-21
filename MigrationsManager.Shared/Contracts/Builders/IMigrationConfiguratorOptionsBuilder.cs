@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MigrationsManager.Shared.Contracts
+namespace MigrationsManager.Shared.Contracts.Builders
 {
     /// <summary>
     /// Represents the migration options builder to configure a Migration

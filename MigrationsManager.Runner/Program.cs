@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MigrationsManager.Extensions;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Contracts.Factories;
 using System;
 
 namespace MigrationsManager.Runner
