@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Core.Defaults
+namespace MigrationsManager.Core.Defaults.Builders
 {
     /// <inheritdoc cref="IMigrationConfiguratorOptionsBuilder"/>
     public class DefaultMigrationConfiguratorOptionsBuilder : IMigrationConfiguratorOptionsBuilder

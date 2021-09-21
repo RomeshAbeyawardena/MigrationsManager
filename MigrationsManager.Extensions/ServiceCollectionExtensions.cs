@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MigrationsManager.Core;
 using MigrationsManager.Core.Defaults;
+using MigrationsManager.Core.Defaults.Builders;
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using System;
@@ -37,7 +38,14 @@ namespace MigrationsManager.Extensions
             var migrationConfigurator = serviceProvider.GetRequiredService<IMigrationConfigurator>();
             var migrationOptions = build(serviceProvider, migrationConfigurator);
             return DefaultKeyValuePair.Create(migrationName, migrationOptions);
-            
+        }
+
+        public static IServiceCollection AddDbTypeDefinitions(this IServiceCollection services, Action<IDictionaryBuilder<Type, string>> build)
+        {
+            var dictionaryBuilder = new DefaultDictionaryBuilder<Type, string>();
+
+            build?.Invoke(dictionaryBuilder);
+            services.AddSingleton(dictionaryBuilder.Dictionary);
         }
     }
 }

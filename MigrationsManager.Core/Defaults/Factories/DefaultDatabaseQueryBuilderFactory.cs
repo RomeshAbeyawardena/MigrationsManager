@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Core.Default.Factories
+namespace MigrationsManager.Core.Defaults.Factories
 {
     [RegisterService]
     public class DefaultDatabaseQueryBuilderFactory : IDatabaseQueryBuilderFactory

@@ -61,6 +61,16 @@ namespace MigrationsManager.Core.Builders
             return $"DROP TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}]";
         }
 
+        public string GetDbType(Type type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetDbType(string type)
+        {
+            throw new NotImplementedException();
+        }
+
         public string TableExists(ITableConfiguration tableConfiguration)
         {
             throw new NotImplementedException();
