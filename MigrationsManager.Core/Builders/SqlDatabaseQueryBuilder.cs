@@ -1,4 +1,5 @@
-﻿using MigrationsManager.Shared.Contracts;
+﻿using MigrationsManager.Shared.Attributes;
+using MigrationsManager.Shared.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,17 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Builders
 {
+    [RegisterService]
     public class SqlDatabaseQueryBuilder : IDatabaseQueryBuilder
     {
+        private readonly IDbTypeDefinitions dbTypeDefinitions;
+
         public string Name => "Sql";
+
+        public SqlDatabaseQueryBuilder(IDbTypeDefinitionsFactory dbTypeDefinitionFactory)
+        {
+            dbTypeDefinitions = dbTypeDefinitionFactory.GetDbTypeDefinitions(Name);
+        }
 
         public string ColumnExists(ITableConfiguration tableConfiguration, string columnName)
         {
@@ -63,12 +72,12 @@ namespace MigrationsManager.Core.Builders
 
         public string GetDbType(Type type)
         {
-            throw new NotImplementedException();
+            return dbTypeDefinitions.GetType(type);
         }
 
         public string GetDbType(string type)
         {
-            throw new NotImplementedException();
+            return GetDbType(Type.GetType(type));
         }
 
         public string TableExists(ITableConfiguration tableConfiguration)

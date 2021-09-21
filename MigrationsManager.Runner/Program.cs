@@ -17,7 +17,9 @@ namespace MigrationsManager.Runner
                 .AddMigration("default", Build)
                 .BuildServiceProvider();
 
-            var migrationManager = services.GetRequiredService<IMigrationManager>();
+            var databaseQueryBuilderFactory = services.GetRequiredService<IDatabaseQueryBuilderFactory>();
+
+            var databaseQueryBuilder = databaseQueryBuilderFactory.GetDatabaseQueryBuilder("Sql");
         }
 
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)
