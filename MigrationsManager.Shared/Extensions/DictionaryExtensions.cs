@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Core.Extensions
+namespace MigrationsManager.Shared.Extensions
 {
     public static class DictionaryExtensions
     {

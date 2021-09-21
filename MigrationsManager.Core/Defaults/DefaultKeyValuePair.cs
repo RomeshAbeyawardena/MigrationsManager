@@ -21,13 +21,13 @@ namespace MigrationsManager.Core.Defaults
     }
     public class DefaultKeyValuePair<TKey, TValue> : IKeyValuePair<TKey, TValue>
     {
-        public DefaultKeyValuePair(TKey key, TValue value)
+        internal DefaultKeyValuePair(TKey key, TValue value)
         {
             Key = key;
             Value = value;
         }
 
-        public DefaultKeyValuePair(KeyValuePair<TKey, TValue> keyValuePair)
+        internal DefaultKeyValuePair(KeyValuePair<TKey, TValue> keyValuePair)
             : this(keyValuePair.Key, keyValuePair.Value)
         {
 

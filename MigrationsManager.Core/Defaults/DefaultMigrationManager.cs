@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MigrationsManager.Core.Extensions;
+using MigrationsManager.Shared.Extensions;
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using System;
