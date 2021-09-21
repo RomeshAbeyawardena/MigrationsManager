@@ -55,6 +55,13 @@ namespace MigrationsManager.Shared.Contracts
         IMigrationConfiguratorOptionsBuilder AddAssembly(Assembly assembly, bool? exclusive = true);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        IMigrationConfiguratorOptionsBuilder AddAssembly<T>(bool? exclusive = true);
+
+        /// <summary>
         /// Adds all types within the specified <see cref="Assembly"/>
         /// </summary>
         /// <param name="assemblies">The <see cref="Assembly"/> to include</param>

@@ -17,6 +17,11 @@ namespace MigrationsManager.Core.Defaults
             builder = new DefaultMigrationConfiguratorOptionsBuilder(new List<Type>(), new Dictionary<Type, ITableConfiguration>());
         }
 
+        public IMigrationOptions Build()
+        {
+            return builder.Build();
+        }
+
         public IMigrationConfigurator Configure(Action<IMigrationConfiguratorOptionsBuilder> configure)
         {
             configure(builder);

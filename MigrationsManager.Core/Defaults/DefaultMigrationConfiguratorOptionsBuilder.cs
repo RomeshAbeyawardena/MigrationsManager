@@ -18,6 +18,7 @@ namespace MigrationsManager.Core.Defaults
         private string defaultSchema = "dbo";
         private readonly List<Type> types;
         private readonly Dictionary<Type, ITableConfiguration> tableConfiguration;
+        private Func<IServiceProvider, IDbConnection> dbConnectionFactory;
 
         private bool HasMigrationAttributeAndEnabled(Type type)
         {
@@ -76,7 +77,7 @@ namespace MigrationsManager.Core.Defaults
 
         public IMigrationOptions Build()
         {
-            var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration);
+            var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration, dbConnectionFactory);
             foreach(var type in types)
             {
                 var tableAttribute = type.GetCustomAttribute<TableAttribute>();
@@ -106,9 +107,15 @@ namespace MigrationsManager.Core.Defaults
             return this;
         }
 
-        public IMigrationConfiguratorOptionsBuilder ConfigureDbConnectionFactory(Func<IServiceProvider, IDbConnection> connectionFactory)
+        public IMigrationConfiguratorOptionsBuilder ConfigureDbConnectionFactory(Func<IServiceProvider, IDbConnection> dbConnectionFactory)
         {
-            throw new NotImplementedException();
+            this.dbConnectionFactory = dbConnectionFactory;
+            return this;
+        }
+
+        public IMigrationConfiguratorOptionsBuilder AddAssembly<T>(bool? exclusive = true)
+        {
+            return AddAssembly(typeof(T).Assembly, exclusive);
         }
     }
 }

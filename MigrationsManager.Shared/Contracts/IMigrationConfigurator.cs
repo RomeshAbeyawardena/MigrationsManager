@@ -18,6 +18,6 @@ namespace MigrationsManager.Shared.Contracts
         /// <param name="configure">Configures the <see cref="IMigrationConfigurator"></see></param>
         /// <returns></returns>
         IMigrationConfigurator Configure(Action<IMigrationConfiguratorOptionsBuilder> configure);
-
+        IMigrationOptions Build();
     }
 }

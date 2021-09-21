@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MigrationsManager.Core;
+using MigrationsManager.Core.Defaults;
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using System;
@@ -12,7 +13,7 @@ namespace MigrationsManager.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddMigrationServices(IServiceCollection services)
+        public static IServiceCollection AddMigrationServices(this IServiceCollection services)
         {
             return services.Scan(s => s.FromAssembliesOf(typeof(This))
                 .AddClasses(a => a.WithAttribute<RegisterServiceAttribute>(rsa => rsa.ServiceLifetime == ServiceLifetime.Singleton))
@@ -26,19 +27,17 @@ namespace MigrationsManager.Extensions
                 .WithTransientLifetime());
         }
 
-        public static IServiceCollection AddMigration(IServiceCollection service, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
+        public static IServiceCollection AddMigration(this IServiceCollection service, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
         {
-            return service.AddScoped(s => ConfigureMigration(s, migrationName, build));
+            return service.AddSingleton(s => s.ConfigureMigration(migrationName, build));
         }
 
-        public static IMigrationOptions ConfigureMigration(IServiceProvider serviceProvider, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
+        public static IKeyValuePair<string, IMigrationOptions> ConfigureMigration(this IServiceProvider serviceProvider, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
         {
-
-            var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
             var migrationConfigurator = serviceProvider.GetRequiredService<IMigrationConfigurator>();
             var migrationOptions = build(serviceProvider, migrationConfigurator);
-            migrationManager.Add(migrationName, migrationOptions);
-            return migrationOptions;
+            return DefaultKeyValuePair.Create(migrationName, migrationOptions);
+            
         }
     }
 }

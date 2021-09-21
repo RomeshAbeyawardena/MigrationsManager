@@ -1,4 +1,6 @@
-﻿using MigrationsManager.Shared.Attributes;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MigrationsManager.Core.Extensions;
+using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using System;
 using System.Collections;
@@ -13,6 +15,15 @@ namespace MigrationsManager.Core.Defaults
     [RegisterService]
     public class DefaultMigrationManager : IMigrationManager
     {
+        public DefaultMigrationManager(IServiceProvider serviceProvider)
+        {
+            var s = serviceProvider
+                .GetRequiredService<IEnumerable<IKeyValuePair<string, IMigrationOptions>>>();
+
+            migrationOptionsDictionary = new Dictionary<string, IMigrationOptions>();
+            migrationOptionsDictionary.AddRange(s);
+        }
+
         private readonly Dictionary<string, IMigrationOptions> migrationOptionsDictionary;
         private ConcurrentQueue<IMigrationOptions> migrations;
         private bool isReadOnly;
