@@ -11,5 +11,6 @@ namespace MigrationsManager.Shared.Contracts
         string PrimaryKey { get; }
         string TableName { get; }
         string Schema { get; }
+        IEnumerable<IDataColumn> DataColumns { get; }
     }
 }

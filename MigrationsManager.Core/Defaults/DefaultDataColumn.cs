@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,6 +16,15 @@ namespace MigrationsManager.Core.Defaults
         {
             Name = property.Name;
             Type = property.PropertyType.Name;
+
+            var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+
+            if(columnAttribute != null)
+            {
+                Name = columnAttribute.Name ?? Name;
+                Type = columnAttribute.TypeName ?? Type;
+            }
+
             var defaultValueAttribute = property.GetCustomAttribute<DefaultValueAttribute>();
 
             if(defaultValueAttribute != null)

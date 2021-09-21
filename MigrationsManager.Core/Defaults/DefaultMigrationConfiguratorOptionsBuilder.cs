@@ -1,5 +1,6 @@
 ﻿using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -80,13 +81,14 @@ namespace MigrationsManager.Core.Defaults
             var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration, dbConnectionFactory);
             foreach(var type in types)
             {
+                var dataColumns = type.GetDataColumns(propertyInfo => new DefaultDataColumn(propertyInfo));
                 var tableAttribute = type.GetCustomAttribute<TableAttribute>();
 
-                var tableConfiguration = new DefaultTableConfiguration(type.Name, defaultSchema);
+                var tableConfiguration = new DefaultTableConfiguration(type.Name, defaultSchema, dataColumns);
 
                 if (tableAttribute != null)
                 {
-                    tableConfiguration = new DefaultTableConfiguration(tableAttribute.Schema, tableAttribute.Name);
+                    tableConfiguration = new DefaultTableConfiguration(tableAttribute.Schema, tableAttribute.Name, dataColumns);
                 }
 
                 var keyAttribute = type.GetCustomAttribute<KeyAttribute>();
