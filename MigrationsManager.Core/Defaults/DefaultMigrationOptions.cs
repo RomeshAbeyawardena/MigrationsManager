@@ -16,6 +16,6 @@ namespace MigrationsManager.Core.Defaults
 
         public IEnumerable<Type> Types { get; }
         public IDictionary<Type, ITableConfiguration> TableConfiguration { get; }
-        public Func<IServiceProvider, IDbConnection> DbConnectionFactory { get; }
+        public Func<IServiceProvider, IDbConnection> DbConnectionFactory { get; private set; }
     }
 }

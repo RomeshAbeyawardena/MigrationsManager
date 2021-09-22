@@ -14,7 +14,6 @@ namespace MigrationsManager.Core.Defaults
     {
         public DefaultMigrationManager(IEnumerable<IKeyValuePair<string, IMigrationOptions>> migrationOptionPairs)
         {
-            
             migrationOptionsDictionary = new Dictionary<string, IMigrationOptions>();
             migrationOptionsDictionary.AddRange(migrationOptionPairs);
         }
@@ -22,7 +21,7 @@ namespace MigrationsManager.Core.Defaults
         private readonly Dictionary<string, IMigrationOptions> migrationOptionsDictionary;
         private ConcurrentQueue<IMigrationOptions> migrations;
         private bool isReadOnly;
-        private ConcurrentQueue<IMigrationOptions> Migrations 
+        public ConcurrentQueue<IMigrationOptions> Migrations 
         { 
             get 
             {

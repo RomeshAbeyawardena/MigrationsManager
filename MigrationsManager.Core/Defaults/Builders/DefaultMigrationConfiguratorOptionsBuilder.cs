@@ -78,6 +78,7 @@ namespace MigrationsManager.Core.Defaults.Builders
         public IMigrationOptions Build()
         {
             var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration, dbConnectionFactory);
+            migrationOptions.Set(a => a.DbConnectionFactory, dbConnectionFactory);
             foreach(var type in types)
             {
                 var dataColumns = type.GetDataColumns(propertyInfo => new DefaultDataColumn(propertyInfo));
