@@ -9,14 +9,16 @@ namespace MigrationsManager.Shared.Attributes
     public sealed class MigrationAttribute : Attribute
     {
         
-        public MigrationAttribute(bool enableMigrations)
+        public MigrationAttribute(bool enableMigrations = true, int orderId = 0)
         {
             Enabled = enableMigrations;
+            OrderId = orderId;
         }
 
         /// <summary>
         /// Gets whether migrations should be enabled
         /// </summary>
         public bool Enabled { get; }
+        public int OrderId { get; }
     }
 }

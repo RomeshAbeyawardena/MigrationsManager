@@ -30,7 +30,8 @@ namespace MigrationsManager.Runner
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)
         {
             return migrationConfigurator
-                .Configure(b => b.AddAssembly<Program>(true).ConfigureDbConnectionFactory(ConfigureDbConnection))
+                .Configure(b => b.AddAssembly<Program>(true)
+                .ConfigureDbConnectionFactory(ConfigureDbConnection))
                 .Build();
         }
 

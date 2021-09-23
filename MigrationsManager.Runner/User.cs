@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MigrationsManager.Runner
 {
-    [Migration(true)]
+    [Migration(orderId: 0)]
     public class User
     {
         [Key]
@@ -14,7 +14,7 @@ namespace MigrationsManager.Runner
         
         public string Name { get; set; }
 
-        [AllowNulls, References(typeof(SystemBUser), "Id")]
+        [AllowNulls, References(typeof(SystemBUser), nameof(SystemBUser.Id))]
         public Guid? SystemBUserId { get; set; }
 
         [Column("UserId")]

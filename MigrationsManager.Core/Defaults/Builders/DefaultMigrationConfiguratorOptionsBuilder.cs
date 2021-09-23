@@ -52,11 +52,23 @@ namespace MigrationsManager.Core.Defaults.Builders
             {
                 types = types
                     .Where(HasMigrationAttributeAndEnabled)
+                    .OrderBy(OrderbyOrderId)
                     .ToArray();
             }
 
             AddTypes(types);
             return this;
+        }
+
+        private object OrderbyOrderId(Type arg)
+        {
+            var migrationAttribute = arg.GetCustomAttribute<MigrationAttribute>();
+            if (migrationAttribute == null)
+            {
+                return arg.Name;
+            }
+
+            return migrationAttribute.OrderId;
         }
 
         public IMigrationConfiguratorOptionsBuilder AddType(Type type)
