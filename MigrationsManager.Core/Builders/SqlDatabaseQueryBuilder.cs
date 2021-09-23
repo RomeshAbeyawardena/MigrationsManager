@@ -2,6 +2,7 @@
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
+using MigrationsManager.Shared.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,28 @@ namespace MigrationsManager.Core.Builders
 
         public string Name => "Sql";
 
+        private string BuildConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, IDataColumn dataColumn, string constraintName = default)
+        {
+
+            if (string.IsNullOrWhiteSpace(constraintName))
+            {
+                constraintName = $"{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}";
+            }
+
+            switch (constraintType)
+            {
+                case ConstraintType.PrimaryKey:
+                    return $"\tCONSTRAINT PK_{constraintName} PRIMARY KEY";
+                case ConstraintType.ForeignKey:
+                    return $"\tCONSTRAINT FK_{constraintName} REFERENCES ";
+                case ConstraintType.Default:
+                    var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
+                    return $"\tCONSTRAINT DF_{constraintName} DEFAULT {dataColumn.DefaultValue}";
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         public SqlDatabaseQueryBuilder(IDbTypeDefinitionsFactory dbTypeDefinitionFactory)
         {
             dbTypeDefinitions = dbTypeDefinitionFactory.GetDbTypeDefinitions(Name);
@@ -28,31 +51,45 @@ namespace MigrationsManager.Core.Builders
                 $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}' AND column_name = '{columnName}') SELECT 1 ELSE SELECT 0";
         }
 
-        public string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn)
+        public string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn, bool isCreateTableSyntax = false)
         {
-            var queryBuilder = new StringBuilder($"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]");
-            queryBuilder.AppendLine($"ADD COLUMN [{dataColumn.Name}] {GetDbType(dataColumn.Type)}");
+            var queryBuilder = new StringBuilder(isCreateTableSyntax 
+                ? string.Empty 
+                : $"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]" +
+                $"ADD COLUMN");
+
+            var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
+            queryBuilder.AppendLine($"[{dataColumn.Name}] {dbType}");
+
+            if (tableConfiguration.PrimaryKey != null && tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                queryBuilder.AppendLine(CreateConstraint(ConstraintType.PrimaryKey, tableConfiguration, dataColumn, true));
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue?.ToString()))
+            {
+                queryBuilder.AppendLine(CreateConstraint(ConstraintType.Default, tableConfiguration, dataColumn, true));
+            }
+
             return queryBuilder.ToString();
         }
 
         public string CreateTable(ITableConfiguration tableConfiguration, IEnumerable<IDataColumn> dataColumns)
         {
             var queryBuilder = new StringBuilder($"CREATE TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}] (");
-
+            bool isFirst = true;
             foreach (var dataColumn in dataColumns)
             {
-                var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
-                queryBuilder.AppendLine($",[{dataColumn.Name}] {dbType}");
-
-                if (tableConfiguration.PrimaryKey != null && tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
+                if (!isFirst)
                 {
-                    queryBuilder.AppendLine($"\tCONSTRAINT PK_{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}");
+                    queryBuilder.Append(", ");
+                }
+                else
+                {
+                    isFirst = false;
                 }
 
-                if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue?.ToString()))
-                {
-                    queryBuilder.AppendLine($"\tCONSTRAINT DF_{tableConfiguration.TableName}_{dataColumn.Name} DEFAULT {dataColumn.DefaultValue}");
-                }
+                queryBuilder.AppendLine(CreateField(tableConfiguration, dataColumn, true));
             }
 
             queryBuilder.AppendLine($")");
@@ -86,7 +123,23 @@ namespace MigrationsManager.Core.Builders
         {
             return $"IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
                 $"WHERE table_name = '{tableConfiguration.TableName}' " +
-                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}') SELECT 1 ELSE SELECT 0";
+                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}') " +
+                "SELECT 1 ELSE SELECT 0";
+        }
+
+        public string CreateConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, 
+            IDataColumn dataColumn, bool isCreateTableSyntax = false, string constraintName = default)
+        {
+            var sqlQueryBuilder = new StringBuilder();
+            if (!isCreateTableSyntax)
+            {
+                sqlQueryBuilder.Append($"ALTER TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}]" +
+                    $"ADD ");
+            }
+
+            sqlQueryBuilder.Append(BuildConstraint(constraintType, tableConfiguration, dataColumn, constraintName));
+
+            return sqlQueryBuilder.ToString();
         }
     }
 }

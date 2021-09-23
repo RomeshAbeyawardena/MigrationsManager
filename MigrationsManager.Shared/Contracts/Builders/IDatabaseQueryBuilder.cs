@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MigrationsManager.Shared.Enumerations;
+using System;
 using System.Collections.Generic;
 
 namespace MigrationsManager.Shared.Contracts.Builders
@@ -24,7 +25,9 @@ namespace MigrationsManager.Shared.Contracts.Builders
         /// <param name="tableConfiguration"></param>
         /// <param name="dataColumn"></param>
         /// <returns></returns>
-        string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn);
+        string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn, bool isCreateTableSyntax = false);
+
+        string CreateConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, IDataColumn dataColumn, bool isCreateTableSyntax = false, string constraintName = default);
 
         /// <summary>
         /// Generates a command to drop an existing field field from a table

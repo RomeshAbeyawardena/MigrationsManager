@@ -25,16 +25,16 @@ namespace MigrationsManager.Extensions
                 .AsImplementedInterfaces()
                 .WithTransientLifetime())
                 .AddDbTypeDefinitions("Sql", dictionaryBuilder => dictionaryBuilder
-                    .Add(typeof(short), "SMALLINT(#length)")
+                    .Add(typeof(short), "SMALLINT")
                     .Add(typeof(DateTimeOffset), "DATETIMEOFFSET")
                     .Add(typeof(DateTime), "DATETIME")
                     .Add(typeof(bool), "BIT")
                     .Add(typeof(byte), "TINYINT")
-                    .Add(typeof(int), "INT(#length)")
+                    .Add(typeof(int), "INT")
                     .Add(typeof(string), "VARCHAR(#length)")
-                    .Add(typeof(float), "numeric(#length)")
-                    .Add(typeof(long), "bigint(#length)")
-                    .Add(typeof(decimal), "decimal(#length)"));
+                    .Add(typeof(float), "FLOAT")
+                    .Add(typeof(long), "BIGINT")
+                    .Add(typeof(decimal), "DECIMAL(#length)"));
         }
 
         public static IServiceCollection AddMigration(this IServiceCollection service, string migrationName, Func<IServiceProvider, IMigrationConfigurator, IMigrationOptions> build)
