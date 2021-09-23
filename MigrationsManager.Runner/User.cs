@@ -12,9 +12,11 @@ namespace MigrationsManager.Runner
         [Key]
         public int Id { get; set; }
         
+        [AllowNulls]
         public string Name { get; set; }
 
-        public Guid SystemBUserId { get; set; }
+        [AllowNulls]
+        public Guid? SystemBUserId { get; set; }
 
         [Column("UserId")]
         public string UserName { get; set; }

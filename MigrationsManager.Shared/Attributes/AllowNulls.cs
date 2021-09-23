@@ -9,5 +9,11 @@ namespace MigrationsManager.Shared.Attributes
     [System.AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
     public sealed class AllowNullsAttribute : Attribute
     {
+        public AllowNullsAttribute(bool enabled = true)
+        {
+            Enabled = enabled;
+        }
+
+        public bool Enabled { get; }
     }
 }

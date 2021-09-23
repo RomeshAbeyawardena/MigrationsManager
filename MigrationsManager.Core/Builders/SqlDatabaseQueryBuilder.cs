@@ -58,8 +58,10 @@ namespace MigrationsManager.Core.Builders
                 : $"ALTER TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}]" +
                 $"{Environment.NewLine}ADD ");
 
+            var nullArgument = dataColumn.IsRequired ? "NOT NULL" : "NULL";
+
             var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
-            queryBuilder.AppendLine($"[{dataColumn.Name}] {dbType}");
+            queryBuilder.AppendLine($"[{dataColumn.Name}] {dbType} {nullArgument}");
 
             if (tableConfiguration.PrimaryKey != null && tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
             {

@@ -9,5 +9,6 @@ namespace MigrationsManager.Shared.Contracts
         int? Length { get; }
         string TypeName { get; }
         object DefaultValue { get; }
+        bool IsRequired { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MigrationsManager.Shared.Contracts;
+﻿using MigrationsManager.Shared.Attributes;
+using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Extensions;
 using System;
 using System.ComponentModel;
@@ -46,13 +47,20 @@ namespace MigrationsManager.Core.Defaults
             {
                 tableConfiguration.Set(a => a.PrimaryKey, Name);
             }
+
+            var requiredAttribute = property.GetCustomAttribute<RequiredAttribute>();
+            var allowNullsAttribute = property.GetCustomAttribute<AllowNullsAttribute>();
+
+            IsRequired = (requiredAttribute != null 
+                || allowNullsAttribute == null 
+                || (allowNullsAttribute != null && !allowNullsAttribute.Enabled));
         }
 
         public string Name { get; private set; }
         public string TypeName { get; private set; }
         public Type Type { get; }
         public object DefaultValue { get; private set; }
-
+        public bool IsRequired { get; private set; }
         public int? Length { get; private set; }
     }
 }
