@@ -9,7 +9,7 @@ namespace MigrationsManager.Shared.Base
 {
     public abstract class DictionaryBase<TKey, TValue> : IDictionary<TKey, TValue>, IEventDictionary<TKey, TValue>
     {
-        private readonly ConcurrentDictionary<TKey, TValue> dictionary;
+        protected readonly ConcurrentDictionary<TKey, TValue> dictionary;
 
         public event EventHandler<DictionaryEventArgs<TValue>> EventOccurred;
         

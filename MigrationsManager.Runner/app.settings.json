@@ -1,5 +1,5 @@
 {
 	"ConnectionStrings": {
-		"default": "Server=localhost"
+		"default": "Server=.\\SQLEXPRESS;Trusted_Connection=true;Initial Catalog=master"
 	}
 }

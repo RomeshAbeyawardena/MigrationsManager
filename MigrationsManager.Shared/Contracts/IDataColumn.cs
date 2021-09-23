@@ -1,9 +1,13 @@
-﻿namespace MigrationsManager.Shared.Contracts
+﻿using System;
+
+namespace MigrationsManager.Shared.Contracts
 {
     public interface IDataColumn
     {
         string Name { get; }
-        string Type { get;}
+        Type Type { get;}
+        int? Length { get; }
+        string TypeName { get; }
         object DefaultValue { get; }
     }
 }

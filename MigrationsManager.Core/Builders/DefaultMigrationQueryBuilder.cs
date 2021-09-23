@@ -38,7 +38,7 @@ namespace MigrationsManager.Core.Builders
             {
                 scope = serviceProvider.CreateScope();
                 var dbConnection = migrationOptions.DbConnectionFactory(scope.ServiceProvider);
-
+                dbConnection.Open();
                 var tableConfigurations = migrationOptions.TableConfiguration.Select(t => t.Value);
 
                 foreach(var tableConfiguration in tableConfigurations)
@@ -46,6 +46,16 @@ namespace MigrationsManager.Core.Builders
                     if (!dbConnection.ExecuteScalar<bool>(queryBuilder.TableExists(tableConfiguration)))
                     {
                         queryStringBuilder.AppendLine(queryBuilder.CreateTable(tableConfiguration, tableConfiguration.DataColumns));
+                    }
+                    else
+                    {
+                        foreach (var column in tableConfiguration.DataColumns)
+                        {
+                            if(dbConnection.ExecuteScalar<bool>(queryBuilder.ColumnExists(tableConfiguration, column.Name)))
+                            {
+                                queryStringBuilder.AppendLine(queryBuilder.CreateField(tableConfiguration, column));
+                            }
+                        }
                     }
                 }
             }

@@ -23,7 +23,7 @@ namespace MigrationsManager.Runner
                 .BuildServiceProvider();
 
             var migrationQueryBuilder = services.GetService<IMigrationQueryBuilder>();
-            migrationQueryBuilder.BuildMigrations("sql");
+            var sql = migrationQueryBuilder.BuildMigrations("sql");
         }
 
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)

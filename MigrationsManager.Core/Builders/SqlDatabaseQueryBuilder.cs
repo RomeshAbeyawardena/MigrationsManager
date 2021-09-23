@@ -11,6 +11,7 @@ namespace MigrationsManager.Core.Builders
     [RegisterService]
     public class SqlDatabaseQueryBuilder : IDatabaseQueryBuilder
     {
+        private const string DefaultLength = "MAX";
         private readonly IDbTypeDefinitions dbTypeDefinitions;
 
         public string Name => "Sql";
@@ -22,15 +23,15 @@ namespace MigrationsManager.Core.Builders
 
         public string ColumnExists(ITableConfiguration tableConfiguration, string columnName)
         {
-            return $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS " +
+            return $"IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
                 $"WHERE table_name = '{tableConfiguration.TableName}' " +
-                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}' AND column_name = '{columnName}'";
+                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}' AND column_name = '{columnName}') SELECT 1 ELSE SELECT 0";
         }
 
         public string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn)
         {
             var queryBuilder = new StringBuilder($"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]");
-            queryBuilder.AppendLine($"ADD COLUMN [{dataColumn.Name}] {dataColumn.Type}");
+            queryBuilder.AppendLine($"ADD COLUMN [{dataColumn.Name}] {GetDbType(dataColumn.Type)}");
             return queryBuilder.ToString();
         }
 
@@ -40,9 +41,10 @@ namespace MigrationsManager.Core.Builders
 
             foreach (var dataColumn in dataColumns)
             {
-                queryBuilder.AppendLine($",[{dataColumn.Name}] {dataColumn.Type}");
+                var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
+                queryBuilder.AppendLine($",[{dataColumn.Name}] {dbType}");
 
-                if (tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
+                if (tableConfiguration.PrimaryKey != null && tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
                     queryBuilder.AppendLine($"\tCONSTRAINT PK_{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}");
                 }
@@ -82,7 +84,9 @@ namespace MigrationsManager.Core.Builders
 
         public string TableExists(ITableConfiguration tableConfiguration)
         {
-            throw new NotImplementedException();
+            return $"IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS " +
+                $"WHERE table_name = '{tableConfiguration.TableName}' " +
+                $"AND TABLE_SCHEMA = '{tableConfiguration.Schema}') SELECT 1 ELSE SELECT 0";
         }
     }
 }

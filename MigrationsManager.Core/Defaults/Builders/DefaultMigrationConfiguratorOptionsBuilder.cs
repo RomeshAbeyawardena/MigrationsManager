@@ -91,12 +91,6 @@ namespace MigrationsManager.Core.Defaults.Builders
                     tableConfiguration = new DefaultTableConfiguration(tableAttribute.Schema, tableAttribute.Name, dataColumns);
                 }
 
-                var keyAttribute = type.GetCustomAttribute<KeyAttribute>();
-                if (keyAttribute != null)
-                {
-                    tableConfiguration.PrimaryKey = tableAttribute.Name;
-                }
-
                 this.tableConfiguration.Add(type, tableConfiguration);
             }
 
