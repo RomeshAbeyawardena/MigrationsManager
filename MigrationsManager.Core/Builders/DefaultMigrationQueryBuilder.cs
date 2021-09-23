@@ -51,7 +51,7 @@ namespace MigrationsManager.Core.Builders
                     {
                         foreach (var column in tableConfiguration.DataColumns)
                         {
-                            if(dbConnection.ExecuteScalar<bool>(queryBuilder.ColumnExists(tableConfiguration, column.Name)))
+                            if(!dbConnection.ExecuteScalar<bool>(queryBuilder.ColumnExists(tableConfiguration, column.Name)))
                             {
                                 queryStringBuilder.AppendLine(queryBuilder.CreateField(tableConfiguration, column));
                             }

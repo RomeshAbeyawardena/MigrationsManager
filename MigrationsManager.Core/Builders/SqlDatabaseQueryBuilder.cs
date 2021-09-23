@@ -55,8 +55,8 @@ namespace MigrationsManager.Core.Builders
         {
             var queryBuilder = new StringBuilder(isCreateTableSyntax 
                 ? string.Empty 
-                : $"ALTER TABLE [{tableConfiguration.Schema}][{tableConfiguration.TableName}]" +
-                $"ADD COLUMN");
+                : $"ALTER TABLE [{tableConfiguration.Schema}].[{tableConfiguration.TableName}]" +
+                $"{Environment.NewLine}ADD ");
 
             var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
             queryBuilder.AppendLine($"[{dataColumn.Name}] {dbType}");

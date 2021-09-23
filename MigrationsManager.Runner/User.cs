@@ -13,6 +13,9 @@ namespace MigrationsManager.Runner
         public int Id { get; set; }
         
         public string Name { get; set; }
+
+        public Guid SystemBUserId { get; set; }
+
         [Column("UserId")]
         public string UserName { get; set; }
 

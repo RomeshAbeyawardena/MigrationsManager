@@ -25,6 +25,7 @@ namespace MigrationsManager.Extensions
                 .AsImplementedInterfaces()
                 .WithTransientLifetime())
                 .AddDbTypeDefinitions("Sql", dictionaryBuilder => dictionaryBuilder
+                    .Add(typeof(Guid), "UNIQUEIDENTIFIER")
                     .Add(typeof(short), "SMALLINT")
                     .Add(typeof(DateTimeOffset), "DATETIMEOFFSET")
                     .Add(typeof(DateTime), "DATETIME")
