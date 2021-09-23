@@ -6,6 +6,7 @@ using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
 using System;
 using System.Data;
+using System.Diagnostics;
 
 namespace MigrationsManager.Runner
 {
@@ -22,9 +23,14 @@ namespace MigrationsManager.Runner
                 .AddMigrationServices()
                 .AddMigration("default", Build)
                 .BuildServiceProvider();
-
+            var sw = new Stopwatch();
+            sw.Start();
             var migrationQueryBuilder = services.GetService<IMigrationQueryBuilder>();
             var sql = migrationQueryBuilder.BuildMigrations("sql");
+
+            sw.Stop();
+
+            Console.WriteLine("Build and sql generation took {0} to generate:\r\n\t{1}", sw.Elapsed, sql);
         }
 
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -90,6 +91,8 @@ namespace MigrationsManager.Core.Defaults.Builders
 
         public IMigrationOptions Build()
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var migrationOptions = new DefaultMigrationOptions(types, tableConfiguration, dbConnectionFactory);
             migrationOptions.Set(a => a.DbConnectionFactory, dbConnectionFactory);
             foreach(var type in types)
@@ -107,7 +110,9 @@ namespace MigrationsManager.Core.Defaults.Builders
 
                 this.tableConfiguration.Add(type, tableConfiguration);
             }
+            sw.Stop();
 
+            Console.WriteLine("Migration build took {0}", sw.Elapsed);
             return migrationOptions;
         }
 
