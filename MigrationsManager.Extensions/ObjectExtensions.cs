@@ -6,14 +6,14 @@ namespace MigrationsManager.Extensions
 {
     public static class ObjectExtensions
     {
-        public static IEnumerable<IDataColumn> GetDataColumns(this object value)
+        public static IEnumerable<IDataColumn> GetDataColumns(this object value, ITableConfiguration tableConfiguration)
         {
             var dataColumnList = new List<IDataColumn>();
             var valueType = value.GetType();
 
             foreach(var property in valueType.GetProperties())
             {
-                dataColumnList.Add(new DefaultDataColumn(property));
+                dataColumnList.Add(new DefaultDataColumn(tableConfiguration, property));
             }
 
             return dataColumnList;

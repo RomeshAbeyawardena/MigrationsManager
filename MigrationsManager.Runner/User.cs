@@ -11,9 +11,14 @@ namespace MigrationsManager.Runner
     {
         [Key]
         public int Id { get; set; }
+        
         public string Name { get; set; }
         [Column("UserId")]
         public string UserName { get; set; }
+
+        [AllowNulls]
+        public string Description { get; set; }
+
         [DefaultValue("GETUTCDATE()")]
         public DateTime Created { get; set; }
     }

@@ -81,10 +81,11 @@ namespace MigrationsManager.Core.Defaults.Builders
             migrationOptions.Set(a => a.DbConnectionFactory, dbConnectionFactory);
             foreach(var type in types)
             {
-                var dataColumns = type.GetDataColumns(propertyInfo => new DefaultDataColumn(propertyInfo));
-                var tableAttribute = type.GetCustomAttribute<TableAttribute>();
+                var dataColumns = new List<IDataColumn>();
 
                 var tableConfiguration = new DefaultTableConfiguration(type.Name, defaultSchema, dataColumns);
+                dataColumns.AddRange(type.GetDataColumns(propertyInfo => new DefaultDataColumn(tableConfiguration, propertyInfo)));
+                var tableAttribute = type.GetCustomAttribute<TableAttribute>();
 
                 if (tableAttribute != null)
                 {

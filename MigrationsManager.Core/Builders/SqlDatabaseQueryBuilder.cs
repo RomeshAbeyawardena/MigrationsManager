@@ -51,7 +51,7 @@ namespace MigrationsManager.Core.Builders
 
                 if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue?.ToString()))
                 {
-                    queryBuilder.AppendLine($"\tCONSTRAINT DF_{tableConfiguration.TableName}_{dataColumn} DEFAULT {dataColumn.DefaultValue}");
+                    queryBuilder.AppendLine($"\tCONSTRAINT DF_{tableConfiguration.TableName}_{dataColumn.Name} DEFAULT {dataColumn.DefaultValue}");
                 }
             }
 
