@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Attributes
 {
-    [System.AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+    /// <summary>
+    /// Marks a field or property as a nullable field in a data context
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
     public sealed class AllowNullsAttribute : Attribute
     {
         public AllowNullsAttribute(bool enabled = true)
@@ -14,6 +17,9 @@ namespace MigrationsManager.Shared.Attributes
             Enabled = enabled;
         }
 
+        /// <summary>
+        /// Determines whether this rule should apply
+        /// </summary>
         public bool Enabled { get; }
     }
 }

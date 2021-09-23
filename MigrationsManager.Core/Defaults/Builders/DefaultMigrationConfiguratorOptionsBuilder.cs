@@ -1,6 +1,7 @@
 ﻿using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
+using MigrationsManager.Shared.Defaults;
 using MigrationsManager.Shared.Extensions;
 using System;
 using System.Collections.Generic;

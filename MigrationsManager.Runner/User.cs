@@ -14,7 +14,7 @@ namespace MigrationsManager.Runner
         
         public string Name { get; set; }
 
-        [AllowNulls]
+        [AllowNulls, References(typeof(SystemBUser), "Id")]
         public Guid? SystemBUserId { get; set; }
 
         [Column("UserId")]

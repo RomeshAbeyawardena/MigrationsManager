@@ -1,7 +1,9 @@
 ﻿using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Defaults;
 using MigrationsManager.Shared.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,8 +13,11 @@ namespace MigrationsManager.Core.Defaults
 {
     public class DefaultDataColumn : IDataColumn
     {
+        private readonly List<IForeignKey> foreignKeys;
+
         public DefaultDataColumn(ITableConfiguration tableConfiguration, PropertyInfo property)
         {
+            foreignKeys = new List<IForeignKey>();
             Name = property.Name;
             Type = property.PropertyType;
             Configure(tableConfiguration, property);
@@ -54,6 +59,18 @@ namespace MigrationsManager.Core.Defaults
             IsRequired = (requiredAttribute != null 
                 || allowNullsAttribute == null 
                 || (allowNullsAttribute != null && !allowNullsAttribute.Enabled));
+
+            var referencesAttribute = property.GetCustomAttribute<ReferencesAttribute>();
+
+            if (referencesAttribute != null)
+            {
+                if (!referencesAttribute.IsDbInfoResolved)
+                {
+                    referencesAttribute = referencesAttribute.ResolveDbInfo();
+
+                    foreignKeys.Add(new DefaultForeignKey(tableConfiguration, referencesAttribute.TableConfiguration, referencesAttribute.ColumnName));
+                }
+            }
         }
 
         public string Name { get; private set; }
@@ -62,5 +79,7 @@ namespace MigrationsManager.Core.Defaults
         public object DefaultValue { get; private set; }
         public bool IsRequired { get; private set; }
         public int? Length { get; private set; }
+
+        public IEnumerable<IForeignKey> ForeignKeys => foreignKeys;
     }
 }

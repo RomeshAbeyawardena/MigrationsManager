@@ -24,7 +24,14 @@ namespace MigrationsManager.Core.Defaults
             var nullable = typeof(Nullable<>);
             if (type.IsGenericType)
             {
-                return GetType(type.GetGenericArguments().FirstOrDefault());
+                var firstGenericTypeArgument = type.GetGenericArguments().FirstOrDefault();
+
+                if (type == nullable.MakeGenericType(firstGenericTypeArgument))
+                {
+                    return GetType(firstGenericTypeArgument);
+                }
+
+                throw new NotSupportedException();
             }
 
             if(definitions.TryGetValue(type, out var value))

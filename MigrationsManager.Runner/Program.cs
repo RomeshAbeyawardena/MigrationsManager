@@ -17,7 +17,8 @@ namespace MigrationsManager.Runner
 
             var serviceCollections = new ServiceCollection();
             var services = serviceCollections
-                .AddSingleton<IConfiguration>(new ConfigurationBuilder().AddJsonFile("app.settings.json").Build())
+                .AddSingleton<IConfiguration>(new ConfigurationBuilder()
+                    .AddJsonFile("app.settings.json").Build())
                 .AddMigrationServices()
                 .AddMigration("default", Build)
                 .BuildServiceProvider();

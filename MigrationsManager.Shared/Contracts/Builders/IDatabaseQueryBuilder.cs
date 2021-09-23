@@ -27,7 +27,8 @@ namespace MigrationsManager.Shared.Contracts.Builders
         /// <returns></returns>
         string CreateField(ITableConfiguration tableConfiguration, IDataColumn dataColumn, bool isCreateTableSyntax = false);
 
-        string CreateConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, IDataColumn dataColumn, bool isCreateTableSyntax = false, string constraintName = default);
+        string CreateConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, IDataColumn dataColumn, 
+            IForeignKey foreignKey = null, bool isCreateTableSyntax = false, string constraintName = default);
 
         /// <summary>
         /// Generates a command to drop an existing field field from a table

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MigrationsManager.Shared.Contracts
 {
@@ -10,5 +11,6 @@ namespace MigrationsManager.Shared.Contracts
         string TypeName { get; }
         object DefaultValue { get; }
         bool IsRequired { get; }
+        IEnumerable<IForeignKey> ForeignKeys { get; }
     }
 }

@@ -5,6 +5,7 @@ using MigrationsManager.Shared.Contracts.Factories;
 using MigrationsManager.Shared.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MigrationsManager.Core.Builders
@@ -17,9 +18,9 @@ namespace MigrationsManager.Core.Builders
 
         public string Name => "Sql";
 
-        private string BuildConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, IDataColumn dataColumn, string constraintName = default)
+        private static string BuildConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, 
+            IDataColumn dataColumn, IForeignKey foreignKey = null, string constraintName = default)
         {
-
             if (string.IsNullOrWhiteSpace(constraintName))
             {
                 constraintName = $"{tableConfiguration.TableName.ToUpper()}_{dataColumn.Name}";
@@ -30,9 +31,13 @@ namespace MigrationsManager.Core.Builders
                 case ConstraintType.PrimaryKey:
                     return $"\tCONSTRAINT PK_{constraintName} PRIMARY KEY";
                 case ConstraintType.ForeignKey:
-                    return $"\tCONSTRAINT FK_{constraintName} REFERENCES ";
+                    if(foreignKey == null)
+                    {
+                        throw new NullReferenceException();
+                    }
+
+                    return $"\tCONSTRAINT FK_{constraintName} REFERENCES [{foreignKey.ForeignTableConfiguration.Schema}].[{foreignKey.ForeignTableConfiguration.TableName}]([{foreignKey.ColumnName}])";
                 case ConstraintType.Default:
-                    var dbType = GetDbType(dataColumn.Type)?.Replace("#length", dataColumn.Length?.ToString() ?? DefaultLength);
                     return $"\tCONSTRAINT DF_{constraintName} DEFAULT {dataColumn.DefaultValue}";
                 default:
                     throw new NotSupportedException();
@@ -65,12 +70,20 @@ namespace MigrationsManager.Core.Builders
 
             if (tableConfiguration.PrimaryKey != null && tableConfiguration.PrimaryKey.Equals(dataColumn.Name, StringComparison.InvariantCultureIgnoreCase))
             {
-                queryBuilder.AppendLine(CreateConstraint(ConstraintType.PrimaryKey, tableConfiguration, dataColumn, true));
+                queryBuilder.AppendLine(CreateConstraint(ConstraintType.PrimaryKey, tableConfiguration, dataColumn, isCreateTableSyntax: true));
             }
+            else if(dataColumn.ForeignKeys.Any())
+            {
+                foreach(var foreignKey in dataColumn.ForeignKeys)
+                {
+                    queryBuilder.AppendLine(CreateConstraint(ConstraintType.ForeignKey, tableConfiguration, dataColumn, foreignKey, true));
+                }
+            }
+
 
             if (!string.IsNullOrWhiteSpace(dataColumn.DefaultValue?.ToString()))
             {
-                queryBuilder.AppendLine(CreateConstraint(ConstraintType.Default, tableConfiguration, dataColumn, true));
+                queryBuilder.AppendLine(CreateConstraint(ConstraintType.Default, tableConfiguration, dataColumn, isCreateTableSyntax: true));
             }
 
             return queryBuilder.ToString();
@@ -130,7 +143,7 @@ namespace MigrationsManager.Core.Builders
         }
 
         public string CreateConstraint(ConstraintType constraintType, ITableConfiguration tableConfiguration, 
-            IDataColumn dataColumn, bool isCreateTableSyntax = false, string constraintName = default)
+            IDataColumn dataColumn, IForeignKey foreignKey = null, bool isCreateTableSyntax = false, string constraintName = default)
         {
             var sqlQueryBuilder = new StringBuilder();
             if (!isCreateTableSyntax)
@@ -139,7 +152,7 @@ namespace MigrationsManager.Core.Builders
                     $"ADD ");
             }
 
-            sqlQueryBuilder.Append(BuildConstraint(constraintType, tableConfiguration, dataColumn, constraintName));
+            sqlQueryBuilder.Append(BuildConstraint(constraintType, tableConfiguration, dataColumn, foreignKey, constraintName));
 
             return sqlQueryBuilder.ToString();
         }

@@ -1,7 +1,7 @@
 ﻿using MigrationsManager.Shared.Contracts;
 using System.Collections.Generic;
 
-namespace MigrationsManager.Core.Defaults
+namespace MigrationsManager.Shared.Defaults
 {
     public class DefaultTableConfiguration : ITableConfiguration
     {
@@ -10,7 +10,7 @@ namespace MigrationsManager.Core.Defaults
         public string Schema { get; }
         public IEnumerable<IDataColumn> DataColumns { get; }
 
-        internal DefaultTableConfiguration(string tableName, string schema, IEnumerable<IDataColumn> dataColumns)
+        public DefaultTableConfiguration(string tableName, string schema, IEnumerable<IDataColumn> dataColumns)
         {
             TableName = tableName;
             Schema = schema;
