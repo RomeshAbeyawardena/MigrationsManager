@@ -12,7 +12,6 @@ namespace MigrationsManager.Runner
         [Key]
         public int Id { get; set; }
         
-        [AllowNulls]
         public string Name { get; set; }
 
         [AllowNulls]

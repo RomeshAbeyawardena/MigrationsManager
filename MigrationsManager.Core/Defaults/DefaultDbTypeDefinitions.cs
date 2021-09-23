@@ -1,6 +1,7 @@
 ﻿using MigrationsManager.Shared.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MigrationsManager.Core.Defaults
 {
@@ -20,6 +21,12 @@ namespace MigrationsManager.Core.Defaults
 
         public string GetType(Type type)
         {
+            var nullable = typeof(Nullable<>);
+            if (type.IsGenericType)
+            {
+                return GetType(type.GetGenericArguments().FirstOrDefault());
+            }
+
             if(definitions.TryGetValue(type, out var value))
             {
                 return value;
