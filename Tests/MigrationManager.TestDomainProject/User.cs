@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MigrationsManager.Runner
+namespace MigrationsManager.TestDomainProject
 {
     [Migration(orderId: 0)]
     public class User

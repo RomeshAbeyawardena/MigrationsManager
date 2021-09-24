@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Runner
+namespace MigrationsManager.TestDomainProject
 {
     [Migration(orderId: 1)]
     public class SystemBUser

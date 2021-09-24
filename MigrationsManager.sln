@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationsManager.Core", "MigrationsManager.Core\MigrationsManager.Core.csproj", "{BCF3716D-5667-4B1D-A2EE-DF2EB3BAFF0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrationsManager.Core", "MigrationsManager.Core\MigrationsManager.Core.csproj", "{BCF3716D-5667-4B1D-A2EE-DF2EB3BAFF0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationsManager.Runner", "MigrationsManager.Runner\MigrationsManager.Runner.csproj", "{F38B43EC-5C17-4C30-9DA6-3F93722F3044}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrationsManager.Runner", "MigrationsManager.Runner\MigrationsManager.Runner.csproj", "{F38B43EC-5C17-4C30-9DA6-3F93722F3044}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationsManager.Scanner", "MigrationsManager.Scanner\MigrationsManager.Scanner.csproj", "{1D1EC115-BBC2-4FB5-9399-1F0C6BC36C86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrationsManager.Scanner", "MigrationsManager.Scanner\MigrationsManager.Scanner.csproj", "{1D1EC115-BBC2-4FB5-9399-1F0C6BC36C86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationsManager.Shared", "MigrationsManager.Shared\MigrationsManager.Shared.csproj", "{146487B3-865B-4D76-BE6C-F55C0B8B8CE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrationsManager.Shared", "MigrationsManager.Shared\MigrationsManager.Shared.csproj", "{146487B3-865B-4D76-BE6C-F55C0B8B8CE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationsManager.Extensions", "MigrationsManager.Extensions\MigrationsManager.Extensions.csproj", "{B377C4CB-91C3-476E-9A0F-E55CDA4BDBD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrationsManager.Extensions", "MigrationsManager.Extensions\MigrationsManager.Extensions.csproj", "{B377C4CB-91C3-476E-9A0F-E55CDA4BDBD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1276C961-8C6C-42F3-BE56-7527A025F02F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MigrationManager.TestDomainProject", "Tests\MigrationManager.TestDomainProject\MigrationManager.TestDomainProject.csproj", "{70B67230-56EC-41D0-B867-144F54C1E58B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BCF3716D-5667-4B1D-A2EE-DF2EB3BAFF0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -86,5 +87,26 @@ Global
 		{B377C4CB-91C3-476E-9A0F-E55CDA4BDBD8}.Release|x64.Build.0 = Release|Any CPU
 		{B377C4CB-91C3-476E-9A0F-E55CDA4BDBD8}.Release|x86.ActiveCfg = Release|Any CPU
 		{B377C4CB-91C3-476E-9A0F-E55CDA4BDBD8}.Release|x86.Build.0 = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|x64.Build.0 = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Debug|x86.Build.0 = Debug|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|x64.ActiveCfg = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|x64.Build.0 = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|x86.ActiveCfg = Release|Any CPU
+		{70B67230-56EC-41D0-B867-144F54C1E58B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9F99068-1EB2-4954-BB65-C4D456CCF1C7}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{70B67230-56EC-41D0-B867-144F54C1E58B} = {1276C961-8C6C-42F3-BE56-7527A025F02F}
 	EndGlobalSection
 EndGlobal

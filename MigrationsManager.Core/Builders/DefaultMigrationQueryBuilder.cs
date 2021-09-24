@@ -66,6 +66,7 @@ namespace MigrationsManager.Core.Builders
         public void Dispose()
         {
             scope.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

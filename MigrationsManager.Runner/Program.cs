@@ -7,6 +7,7 @@ using MigrationsManager.Shared.Contracts.Factories;
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace MigrationsManager.Runner
 {
@@ -17,8 +18,9 @@ namespace MigrationsManager.Runner
             Console.WriteLine("Hello World!");
 
             var serviceCollections = new ServiceCollection();
-            var services = serviceCollections
+            using var services = serviceCollections
                 .AddSingleton<IConfiguration>(new ConfigurationBuilder()
+                    .AddCommandLine(args)
                     .AddJsonFile("app.settings.json").Build())
                 .AddMigrationServices()
                 .AddMigration("default", Build)
@@ -36,9 +38,15 @@ namespace MigrationsManager.Runner
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)
         {
             return migrationConfigurator
-                .Configure(b => b.AddAssembly<Program>(true)
+                .Configure(b => b.AddAssembly(GetAssembly)
                 .ConfigureDbConnectionFactory(ConfigureDbConnection))
                 .Build();
+        }
+
+        private static Assembly GetAssembly(IServiceProvider serviceProvider)
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            return Assembly.LoadFile(configuration.GetSection("assembly").Value);
         }
 
         private static IDbConnection ConfigureDbConnection(IServiceProvider serviceProvider)

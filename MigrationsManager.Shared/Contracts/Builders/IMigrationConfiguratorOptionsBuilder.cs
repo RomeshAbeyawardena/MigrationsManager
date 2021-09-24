@@ -49,7 +49,12 @@ namespace MigrationsManager.Shared.Contracts.Builders
         /// <param name="exclusive">Determines whether all classes within the <see cref="Assembly"/> should be included or just ones marked with <see cref="MigrationsManager.Shared.Attributes.MigrationAttribute"/></param>
         /// <returns></returns>
         IMigrationConfiguratorOptionsBuilder AddAssembly(Assembly assembly, bool? exclusive = true);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        IMigrationConfiguratorOptionsBuilder AddAssembly(Func<IServiceProvider, Assembly> assembly, bool? exclusive = true);
         /// <summary>
         /// 
         /// </summary>

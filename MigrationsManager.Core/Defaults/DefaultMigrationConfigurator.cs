@@ -14,9 +14,9 @@ namespace MigrationsManager.Core.Defaults
     {
         private readonly IMigrationConfiguratorOptionsBuilder builder;
 
-        public DefaultMigrationConfigurator()
+        public DefaultMigrationConfigurator(IServiceProvider serviceProvider)
         {
-            builder = new DefaultMigrationConfiguratorOptionsBuilder(new List<Type>(), new Dictionary<Type, ITableConfiguration>());
+            builder = new DefaultMigrationConfiguratorOptionsBuilder(serviceProvider, new List<Type>(), new Dictionary<Type, ITableConfiguration>());
         }
 
         public IMigrationOptions Build()

@@ -18,6 +18,7 @@ namespace MigrationsManager.Core.Defaults.Builders
     public class DefaultMigrationConfiguratorOptionsBuilder : IMigrationConfiguratorOptionsBuilder
     {
         private string defaultSchema = "dbo";
+        private readonly IServiceProvider serviceProvider;
         private readonly List<Type> types;
         private readonly Dictionary<Type, ITableConfiguration> tableConfiguration;
         private Func<IServiceProvider, IDbConnection> dbConnectionFactory;
@@ -29,8 +30,9 @@ namespace MigrationsManager.Core.Defaults.Builders
             return migrationAttribute != null && migrationAttribute.Enabled;
         }
 
-        internal DefaultMigrationConfiguratorOptionsBuilder(List<Type> types, Dictionary<Type, ITableConfiguration> tableConfiguration)
+        internal DefaultMigrationConfiguratorOptionsBuilder(IServiceProvider serviceProvider, List<Type> types, Dictionary<Type, ITableConfiguration> tableConfiguration)
         {
+            this.serviceProvider = serviceProvider;
             this.types = types;
             this.tableConfiguration = tableConfiguration;
         }
@@ -131,6 +133,11 @@ namespace MigrationsManager.Core.Defaults.Builders
         public IMigrationConfiguratorOptionsBuilder AddAssembly<T>(bool? exclusive = true)
         {
             return AddAssembly(typeof(T).Assembly, exclusive);
+        }
+
+        public IMigrationConfiguratorOptionsBuilder AddAssembly(Func<IServiceProvider, Assembly> assembly, bool? exclusive = true)
+        {
+            return AddAssembly(assembly.Invoke(serviceProvider), exclusive);
         }
     }
 }
