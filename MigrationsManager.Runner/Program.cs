@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MigrationsManager.Extensions;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
@@ -15,13 +16,14 @@ namespace MigrationsManager.Runner
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Migratons manager runner");
 
             var serviceCollections = new ServiceCollection();
             using var services = serviceCollections
                 .AddSingleton<IConfiguration>(new ConfigurationBuilder()
                     .AddCommandLine(args)
                     .AddJsonFile("app.settings.json").Build())
+                .AddLogging(c => c.AddConsole())
                 .AddMigrationServices()
                 .AddMigration("default", Build)
                 .BuildServiceProvider();
@@ -45,8 +47,11 @@ namespace MigrationsManager.Runner
 
         private static Assembly GetAssembly(IServiceProvider serviceProvider)
         {
+            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            return Assembly.LoadFile(configuration.GetSection("assembly").Value);
+            var assemblyPath = configuration.GetSection("assembly").Value;
+            logger.LogInformation($"Loading assembly: {assemblyPath}");
+            return Assembly.LoadFile(assemblyPath);
         }
 
         private static IDbConnection ConfigureDbConnection(IServiceProvider serviceProvider)

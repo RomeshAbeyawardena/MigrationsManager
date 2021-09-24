@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MigrationsManager.Runner": {
+      "commandName": "Project",
+      "commandLineArgs": "--assembly=\"D:\\dev\\source\\MigrationsManager\\Tests\\MigrationManager.TestDomainProject\\bin\\Debug\\netstandard2.0\\MigrationManager.TestDomainProject.dll\""
+    }
+  }
+}
