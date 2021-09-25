@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults
 {
+    /// <inheritdoc cref="IModuleRunner" />
     [RegisterService]
     public class DefaultModuleRunner : ModuleBase, IModuleRunner
     {
@@ -50,7 +51,6 @@ namespace MigrationsManager.Core.Defaults
             } 
         }
 
-        
         private static IEnumerable<Type> GetModuleTypes(IEnumerable<Assembly> assemblies)
         {
             return assemblies.SelectMany(a => a.GetTypes().Where(type => type.GetInterfaces().Any(interfaceType => interfaceType == typeof(IModule))));

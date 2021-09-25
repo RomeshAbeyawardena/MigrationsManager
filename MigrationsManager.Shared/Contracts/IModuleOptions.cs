@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Contracts
 {
+    /// <summary>
+    /// Represents module options
+    /// </summary>
     public interface IModuleOptions
     {
         IModuleAssemblyOptions ModuleAssembliesOptions { get; }

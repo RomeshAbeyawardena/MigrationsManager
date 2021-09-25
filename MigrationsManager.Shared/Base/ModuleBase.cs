@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Base
 {
+    /// <inheritdoc cref="IModule"/>
     public abstract class ModuleBase : IModule
     {
+        /// <inheritdoc cref="IDisposable"/>
         public virtual void Dispose(bool dispose)
         {
             if (dispose)
