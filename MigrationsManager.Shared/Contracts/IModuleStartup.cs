@@ -9,6 +9,6 @@ namespace MigrationsManager.Shared.Contracts
 {
     public interface IModuleStartup : IModule
     {
-        void ConfigureServices(IServiceCollection services);
+        
     }
 }

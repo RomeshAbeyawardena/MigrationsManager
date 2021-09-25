@@ -14,7 +14,7 @@ namespace MigrationsManager.Core.Defaults.Builders
     public class DefaultModuleConfigurationBuilder : IModuleConfigurationBuilder
     {
         private readonly IServiceCollection services;
-        private DefaultModuleAssemblyLocatorOptions moduleAssemblyOptions;
+        private readonly DefaultModuleAssemblyLocatorOptions moduleAssemblyOptions;
 
         public DefaultModuleConfigurationBuilder(IServiceCollection services)
         {
@@ -25,7 +25,7 @@ namespace MigrationsManager.Core.Defaults.Builders
         public IModuleStartup Build()
         {
             services.AddSingleton<IDictionary<Assembly, IAssemblyOptions>>(moduleAssemblyOptions);
-            return new DefaultModuleStartup(services);
+            return new DefaultModuleStartup(services, new DefaultModuleRunner(services.BuildServiceProvider(), new DefaultModuleOptions(moduleAssemblyOptions)));
         }
 
         public IModuleStartup Build(Action<IModuleConfigurationBuilder> configure)

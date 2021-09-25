@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MigrationsManager.Shared.Attributes;
+using MigrationsManager.Shared.Base;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,7 @@ using System.Threading.Tasks;
 namespace MigrationsManager.Core.Defaults
 {
     [RegisterService]
-    public class DefaultModuleRunner : IModuleRunner
+    public class DefaultModuleRunner : ModuleBase, IModuleRunner
     {
         private readonly IServiceCollection services;
         private readonly IServiceProvider serviceProvider;
@@ -69,10 +71,17 @@ namespace MigrationsManager.Core.Defaults
             }
 
             var parameters = defaultConstructor.GetParameters()
-                .Select(a => serviceProvider.GetRequiredService(a.ParameterType))
+                .Select(a => ModuleServiceProvider.GetRequiredService(a.ParameterType))
                 .ToArray();
 
             return Activator.CreateInstance(type, parameters) as IModule;
+        }
+
+        private void RegisterServices(Type type)
+        {
+            var configureServicesMethod = type.GetMethod("ConfigureServices", BindingFlags.Public | BindingFlags.Static);
+
+            configureServicesMethod.Invoke(null, new[] { services });
         }
 
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)
@@ -88,21 +97,25 @@ namespace MigrationsManager.Core.Defaults
             configureServices(services);
         }
 
-        public Task Run(CancellationToken cancellationToken)
+        public override Task Run(CancellationToken cancellationToken)
         {
             services.AddSingleton(s => ModuleServiceProvider);
 
-            services.AddSingleton(s => GetModuleTypes(moduleOptions.ModuleAssemblies.GetAssemblies(a => a.Injectable && a.Discoverable))
+            services.AddSingleton(s => GetModuleTypes(moduleOptions.ModuleAssembliesOptions.GetAssemblies(a => a.Injectable && a.Discoverable))
                 .Select(Activate));
 
-            modules = GetModuleTypes(moduleOptions.ModuleAssemblies.GetAssemblies(a => a.OnStartup && a.Discoverable)).Select(Activate);
+            var moduleTypes = GetModuleTypes(moduleOptions.ModuleAssembliesOptions.GetAssemblies(a => a.OnStartup && a.Discoverable));
+
+            moduleTypes.ForEach(RegisterServices);
+
+            modules =  moduleTypes.Select(Activate);
 
             return Task.WhenAll(modules.Select(m => m.Run(cancellationToken)));
         }
 
-        public Task Stop(CancellationToken cancellationToken)
+        public override Task Stop(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.WhenAll(modules.Select(a => a.Stop(cancellationToken)));
         }
 
         public void Merge(IServiceCollection services)
@@ -114,6 +127,11 @@ namespace MigrationsManager.Core.Defaults
                     this.services.Add(service);
                 }
             }
+        }
+
+        public static void ConfigureServices(IServiceCollection services)
+        {
+            throw new NotImplementedException();
         }
     }
 }

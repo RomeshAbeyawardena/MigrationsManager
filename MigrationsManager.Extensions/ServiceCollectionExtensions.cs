@@ -11,6 +11,16 @@ namespace MigrationsManager.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        public static IModuleConfigurationBuilder AddModules(this IServiceCollection services,
+            Action<IModuleConfigurationBuilder> build)
+        {
+            var defaultModuleConfigurationBuilder = new DefaultModuleConfigurationBuilder(services);
+
+            build(defaultModuleConfigurationBuilder);
+
+            return defaultModuleConfigurationBuilder;
+        }
+
         public static IServiceCollection AddMigrationServices(this IServiceCollection services)
         {
             return services

@@ -8,6 +8,6 @@ namespace MigrationsManager.Shared.Contracts
 {
     public interface IModuleOptions
     {
-        IModuleAssemblyOptions ModuleAssemblies { get; }
+        IModuleAssemblyOptions ModuleAssembliesOptions { get; }
     }
 }
