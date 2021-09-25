@@ -11,6 +11,12 @@ namespace MigrationsManager.Extensions
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds modules to be loaded and prepared in memory.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="build"></param>
+        /// <returns></returns>
         public static IModuleConfigurationBuilder AddModules(this IServiceCollection services,
             Action<IModuleConfigurationBuilder> build)
         {

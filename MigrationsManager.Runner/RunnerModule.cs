@@ -33,7 +33,7 @@ namespace MigrationsManager.Runner
 
         private static Assembly GetAssembly(IServiceProvider serviceProvider)
         {
-            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<RunnerModule>>();
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
             var assemblyPath = configuration.GetSection("assembly").Value;
             logger.LogInformation($"Loading assembly: {assemblyPath}");

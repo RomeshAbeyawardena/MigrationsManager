@@ -81,7 +81,7 @@ namespace MigrationsManager.Core.Defaults
         {
             var configureServicesMethod = type.GetMethod("ConfigureServices", BindingFlags.Public | BindingFlags.Static);
 
-            configureServicesMethod.Invoke(null, new[] { services });
+            configureServicesMethod?.Invoke(null, new[] { services });
         }
 
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)

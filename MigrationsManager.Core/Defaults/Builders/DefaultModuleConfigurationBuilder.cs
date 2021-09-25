@@ -14,11 +14,10 @@ namespace MigrationsManager.Core.Defaults.Builders
     public class DefaultModuleConfigurationBuilder : IModuleConfigurationBuilder
     {
         private readonly IServiceCollection services;
-        private readonly DefaultModuleAssemblyLocatorOptions moduleAssemblyOptions;
-
+        private readonly DefaultModuleAssemblyOptions moduleAssemblyOptions;
         public DefaultModuleConfigurationBuilder(IServiceCollection services)
         {
-            moduleAssemblyOptions = new DefaultModuleAssemblyLocatorOptions();
+            moduleAssemblyOptions = new DefaultModuleAssemblyOptions();
             this.services = services;
         }
 

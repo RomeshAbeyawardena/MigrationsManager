@@ -29,7 +29,12 @@ namespace MigrationsManager.Runner
                 .AddLogging(c => c.AddConsole());
 
             await services
-                .AddModules(b => b.ConfigureAssemblies(c => c.AddAssembly(typeof(Program).Assembly, new DefaultAssemblyOptions { Discoverable = true, OnStartup = true })))
+                .AddModules(b => b.ConfigureAssemblies(c =>
+                {
+                    c.AddAssembly<Program>(new DefaultAssemblyOptions { Discoverable = true, OnStartup = true });
+                    c.AddAssembly("D:\\dev\\source\\MigrationsManager\\Tests\\MigrationManager.TestDomainProject\\bin\\Debug\\netstandard2.0\\MigrationManager.TestDomainProject.dll", 
+                        new DefaultAssemblyOptions { Discoverable = true, OnStartup = true }); 
+                }))
                 .Build()
                 .Run(CancellationToken.None);
 

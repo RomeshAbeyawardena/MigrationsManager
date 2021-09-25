@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults.Options
 {
-    public class DefaultModuleAssemblyOptions : DictionaryBase<Assembly, IAssemblyOptions>, IModuleAssemblyOptions
+    public class DefaultModuleAssemblyOptions : DictionaryBase<Assembly, IAssemblyOptions>, 
+        IModuleAssemblyOptions, 
+        IModuleAssemblyLocatorOptions
     {
         public DefaultModuleAssemblyOptions()
         {
@@ -25,6 +27,11 @@ namespace MigrationsManager.Core.Defaults.Options
         public IModuleAssemblyOptions AddAssembly<T>(IAssemblyOptions assemblyOptions)
         {
             return AddAssembly(typeof(T).Assembly, assemblyOptions);
+        }
+
+        public IModuleAssemblyOptions AddAssembly(string assemblyNameorFilePath, IAssemblyOptions assemblyOptions)
+        {
+            return AddAssembly(Assembly.LoadFrom(assemblyNameorFilePath), assemblyOptions);
         }
 
         public IEnumerable<Assembly> GetAssemblies(Func<IAssemblyOptions, bool> filterOptions)
