@@ -10,6 +10,7 @@ namespace MigrationsManager.Shared.Contracts
 {
     public interface IModuleRunner : IModule
     {
+        void Merge(IServiceCollection services);
         void Configure(Action<IServiceCollection> configureServices);
     }
 }

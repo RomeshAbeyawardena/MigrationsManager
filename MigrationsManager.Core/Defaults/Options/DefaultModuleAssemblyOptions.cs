@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults.Options
 {
-    public class ModuleAssemblyOptions : DictionaryBase<Assembly, IAssemblyOptions>, IModuleAssemblyOptions
+    public class DefaultModuleAssemblyOptions : DictionaryBase<Assembly, IAssemblyOptions>, IModuleAssemblyOptions
     {
-        public ModuleAssemblyOptions()
+        public DefaultModuleAssemblyOptions()
         {
 
         }

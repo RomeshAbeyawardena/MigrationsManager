@@ -1,4 +1,5 @@
-﻿using MigrationsManager.Shared.Attributes;
+﻿using MigrationsManager.Core.Options;
+using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Defaults;

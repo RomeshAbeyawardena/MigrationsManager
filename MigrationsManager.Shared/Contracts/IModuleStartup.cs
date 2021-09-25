@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace MigrationsManager.Shared.Contracts
 {
     public interface IModuleStartup : IModule
     {
-        
+        void ConfigureServices(IServiceCollection services);
     }
 }

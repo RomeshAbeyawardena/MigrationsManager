@@ -20,7 +20,7 @@ namespace MigrationsManager.Core.Defaults
         private IEnumerable<IModule> modules;
         private IServiceProvider builtModuleServices;
         private IModuleServiceProvider moduleServiceProvider;
-        private Dictionary<Type, IModule> modulesCache;
+        private readonly Dictionary<Type, IModule> modulesCache;
 
         private IModuleServiceProvider ModuleServiceProvider
         {
@@ -77,6 +77,8 @@ namespace MigrationsManager.Core.Defaults
 
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)
         {
+            services = new ServiceCollection();
+            modulesCache = new Dictionary<Type, IModule>();
             this.serviceProvider = serviceProvider;
             this.moduleOptions = moduleOptions;
         }
@@ -101,6 +103,17 @@ namespace MigrationsManager.Core.Defaults
         public Task Stop(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+        }
+
+        public void Merge(IServiceCollection services)
+        {
+            foreach (var service in services)
+            {
+                if (!this.services.Contains(service))
+                {
+                    this.services.Add(service);
+                }
+            }
         }
     }
 }

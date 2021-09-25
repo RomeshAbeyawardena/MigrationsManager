@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults.Options
 {
-    public class ModuleAssemblyLocatorOptions : ModuleAssemblyOptions, IModuleAssemblyLocatorOptions
+    public class DefaultModuleAssemblyLocatorOptions : DefaultModuleAssemblyOptions, IModuleAssemblyLocatorOptions
     {
         public IModuleAssemblyOptions AddAssembly(string assemblyFilenameOrFilePath, IAssemblyOptions assemblyOptions)
         {
