@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MigrationsManager.Core.Defaults.Options
+namespace MigrationsManager.Shared.Defaults.Options
 {
     public class DefaultAssemblyOptions : IAssemblyOptions
     {

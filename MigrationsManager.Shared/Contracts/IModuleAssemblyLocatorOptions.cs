@@ -11,6 +11,7 @@
         /// <param name="assemblyNameOrFilePath"></param>
         /// <param name="assemblyOptions"></param>
         /// <returns></returns>
-        IModuleAssemblyOptions AddAssembly(string assemblyNameOrFilePath, IAssemblyOptions assemblyOptions);
+        IModuleAssemblyLocatorOptions AddAssembly(string assemblyNameOrFilePath, IAssemblyOptions assemblyOptions);
+        IModuleAssemblyLocatorOptions AddAssembly(string appSettingsSection, string fileName = default);
     }
 }

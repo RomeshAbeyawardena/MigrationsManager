@@ -6,6 +6,7 @@ using MigrationsManager.Extensions;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
+using MigrationsManager.Shared.Defaults.Options;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -32,8 +33,7 @@ namespace MigrationsManager.Runner
                 .AddModules(b => b.ConfigureAssemblies(c =>
                 {
                     c.AddAssembly<Program>(new DefaultAssemblyOptions { Discoverable = true, OnStartup = true });
-                    c.AddAssembly("D:\\dev\\source\\MigrationsManager\\Tests\\MigrationManager.TestDomainProject\\bin\\Debug\\netstandard2.0\\MigrationManager.TestDomainProject.dll", 
-                        new DefaultAssemblyOptions { Discoverable = true, OnStartup = true }); 
+                    c.AddAssembly("*"); 
                 }))
                 .Build()
                 .Run(CancellationToken.None);

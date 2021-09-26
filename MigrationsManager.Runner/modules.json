@@ -1,0 +1,12 @@
+{
+	"Modules": [
+		{
+			"Enabled": true,
+			"FileName": "D:\\dev\\source\\MigrationsManager\\Tests\\MigrationManager.TestDomainProject\\bin\\Debug\\netstandard2.0\\MigrationManager.TestDomainProject.dll",
+			"Options": {
+				"Discoverable": true,
+				"OnStartup": true
+			}
+		}
+	]
+}
