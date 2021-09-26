@@ -29,14 +29,15 @@ namespace MigrationsManager.Runner
                     .AddJsonFile("app.settings.json").Build())
                 .AddLogging(c => c.AddConsole());
 
-            await services
+            using var moduleStartup = services
                 .AddModules(b => b.ConfigureAssemblies(c =>
                 {
                     c.AddAssembly<Program>(new DefaultAssemblyOptions { Discoverable = true, OnStartup = true });
-                    c.AddAssembly("*"); 
+                    c.AddAssembly("*");
                 }))
-                .Build()
-                .Run(CancellationToken.None);
+                .Build();
+
+                await moduleStartup.Run(CancellationToken.None);
 
         }
     }

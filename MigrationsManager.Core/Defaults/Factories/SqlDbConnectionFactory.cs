@@ -10,12 +10,18 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Core.Defaults.Factories
 {
-    [RegisterService]
+    [RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped)]
     public class SqlDbConnectionFactory : IDbConnectionFactory
     {
+        private IDbConnection dbConnection;
         public IDbConnection GetDbConnection(string connectionString)
         {
-            return new SqlConnection(connectionString);
+            return dbConnection = new SqlConnection(connectionString);
+        }
+
+        public void Dispose()
+        {
+            dbConnection?.Dispose();
         }
     }
 }

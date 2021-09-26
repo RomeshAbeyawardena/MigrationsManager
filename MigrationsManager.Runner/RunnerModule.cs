@@ -72,7 +72,7 @@ namespace MigrationsManager.Runner
 
         public override Task Stop(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

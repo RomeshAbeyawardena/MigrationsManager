@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace MigrationsManager.Core.Defaults
 {
     /// <inheritdoc cref="IModuleRunner" />
-    [RegisterService]
+    [RegisterService(ServiceLifetime.Transient)]
     public class DefaultModuleRunner : ModuleBase, IModuleRunner
     {
         private readonly IServiceCollection services;
@@ -116,6 +116,16 @@ namespace MigrationsManager.Core.Defaults
         public override Task Stop(CancellationToken cancellationToken)
         {
             return Task.WhenAll(modules.Select(a => a.Stop(cancellationToken)));
+        }
+
+        public override void Dispose(bool dispose)
+        {
+            if (dispose)
+            {
+                modules.ForEach(m => m.Dispose());
+            }
+
+            base.Dispose(dispose);
         }
 
         public void Merge(IServiceCollection services)

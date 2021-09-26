@@ -23,8 +23,7 @@ namespace MigrationsManager.Core.Defaults
 
         public static void ConfigureServices(IServiceCollection services)
         {
-            services
-                .BuildServiceProvider();
+            
         }
 
         public override Task Run(CancellationToken cancellationToken)
@@ -37,6 +36,12 @@ namespace MigrationsManager.Core.Defaults
         public override Task Stop(CancellationToken cancellationToken)
         {
             return moduleRunner.Stop(cancellationToken);
+        }
+
+        public override void Dispose(bool dispose)
+        {
+            moduleRunner.Dispose();
+            base.Dispose(dispose);
         }
     }
 }

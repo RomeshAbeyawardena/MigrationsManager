@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Contracts
 {
-    public interface IModulesConfiguration : IIncludeConfiguration
+    public interface IIncludeConfiguration
     {
-        IEnumerable<IModuleConfiguration> Modules { get; set; }
+        string IncludePath { get; set; }
     }
 }
