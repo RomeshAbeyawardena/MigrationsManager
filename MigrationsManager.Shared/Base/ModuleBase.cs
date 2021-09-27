@@ -56,8 +56,16 @@ namespace MigrationsManager.Shared.Base
             GC.SuppressFinalize(this);
         }
 
-        public abstract Task Run(CancellationToken cancellationToken);
+        public virtual Task Run(CancellationToken cancellationToken)
+        {
+            OnStarted(new ModuleEventArgs());
+            return Task.CompletedTask;
+        }
 
-        public abstract Task Stop(CancellationToken cancellationToken);
+        public virtual Task Stop(CancellationToken cancellationToken)
+        {
+            OnStopped(new ModuleEventArgs());
+            return Task.CompletedTask;
+        }
     }
 }

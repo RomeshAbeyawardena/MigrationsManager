@@ -100,7 +100,7 @@ namespace MigrationsManager.Core.Defaults
             configureServices(services);
         }
 
-        public override Task Run(CancellationToken cancellationToken)
+        public override async Task Run(CancellationToken cancellationToken)
         {
             services.AddSingleton(s => ModuleServiceProvider);
 
@@ -113,12 +113,14 @@ namespace MigrationsManager.Core.Defaults
 
             modules =  moduleTypes.Select(Activate);
 
-            return Task.WhenAll(modules.Select(m => m.Run(cancellationToken)));
+            await Task.WhenAll(modules.Select(m => m.Run(cancellationToken)));
+            await Run(cancellationToken);
         }
 
-        public override Task Stop(CancellationToken cancellationToken)
+        public override async Task Stop(CancellationToken cancellationToken)
         {
-            return Task.WhenAll(modules.Select(a => a.Stop(cancellationToken)));
+            await Task.WhenAll(modules.Select(a => a.Stop(cancellationToken)));
+            await base.Stop(cancellationToken);
         }
 
         public override void Dispose(bool dispose)

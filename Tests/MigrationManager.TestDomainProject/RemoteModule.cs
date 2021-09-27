@@ -21,12 +21,12 @@ namespace MigrationManager.TestDomainProject
         public override Task Run(CancellationToken cancellationToken)
         {
             logger.LogInformation("Running"); ;
-            return Task.CompletedTask;
+            return base.Run(cancellationToken);
         }
 
         public override Task Stop(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            return base.Stop(cancellationToken);
         }
     }
 }
