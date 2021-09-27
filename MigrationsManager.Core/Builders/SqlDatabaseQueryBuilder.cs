@@ -10,7 +10,7 @@ using System.Text;
 
 namespace MigrationsManager.Core.Builders
 {
-    [RegisterService]
+    [RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient)]
     public class SqlDatabaseQueryBuilder : IDatabaseQueryBuilder
     {
         private const string DefaultLength = "MAX";

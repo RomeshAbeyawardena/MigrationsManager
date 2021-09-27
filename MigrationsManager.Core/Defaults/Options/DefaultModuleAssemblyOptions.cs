@@ -57,7 +57,8 @@ namespace MigrationsManager.Core.Defaults.Options
             using (var streamReader = File.OpenText(fileName))
             {
                 var json = streamReader.ReadToEnd();
-                IModulesConfiguration configuration = JsonSerializer.Deserialize<DefaultModulesConfiguration>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                IModulesConfiguration configuration = JsonSerializer.Deserialize<DefaultModulesConfiguration>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                    .Extend<DefaultModulesConfiguration>();
                 var modules = configuration.Modules;
                 
                 modules.ForEach(AddAssemblyByConfiguration);

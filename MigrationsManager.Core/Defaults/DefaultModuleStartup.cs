@@ -21,14 +21,8 @@ namespace MigrationsManager.Core.Defaults
             this.moduleRunner = moduleRunner;
         }
 
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            
-        }
-
         public override Task Run(CancellationToken cancellationToken)
-        {
-            ConfigureServices(services);
+        {            
             moduleRunner.Merge(services);
             return moduleRunner.Run(cancellationToken);
         }
@@ -40,7 +34,10 @@ namespace MigrationsManager.Core.Defaults
 
         public override void Dispose(bool dispose)
         {
-            moduleRunner.Dispose();
+            if(dispose)
+            { 
+                moduleRunner.Dispose();
+            }
             base.Dispose(dispose);
         }
     }

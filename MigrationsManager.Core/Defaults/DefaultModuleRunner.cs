@@ -24,7 +24,7 @@ namespace MigrationsManager.Core.Defaults
         private IServiceProvider builtModuleServices;
         private IModuleServiceProvider moduleServiceProvider;
         private readonly Dictionary<Type, IModule> modulesCache;
-
+        private List<object> Parameters { get; set; }
         private IModuleServiceProvider ModuleServiceProvider
         {
             get
@@ -74,6 +74,8 @@ namespace MigrationsManager.Core.Defaults
                 .Select(a => ModuleServiceProvider.GetRequiredService(a.ParameterType))
                 .ToArray();
 
+            Parameters.AddRange(parameters);
+
             return Activator.CreateInstance(type, parameters) as IModule;
         }
 
@@ -86,6 +88,7 @@ namespace MigrationsManager.Core.Defaults
 
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)
         {
+            Parameters = new List<object>();
             services = new ServiceCollection();
             modulesCache = new Dictionary<Type, IModule>();
             this.serviceProvider = serviceProvider;
@@ -123,6 +126,9 @@ namespace MigrationsManager.Core.Defaults
             if (dispose)
             {
                 modules.ForEach(m => m.Dispose());
+
+                Parameters.Where(a => a is IDisposable)
+                    .Select(a => a as IDisposable).ForEach(a => a.Dispose());
             }
 
             base.Dispose(dispose);
