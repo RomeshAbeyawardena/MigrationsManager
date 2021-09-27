@@ -14,6 +14,20 @@ namespace MigrationsManager.Shared.Contracts
     public interface IModule : IDisposable
     {
         /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<ModuleEventArgs> Started;
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<ModuleEventArgs> Stopped;
+
+        /// <summary>
+        /// Adds constructor parameters
+        /// </summary>
+        /// <param name="parameters"></param>
+        void AddParameters(IEnumerable<object> parameters);
+        /// <summary>
         /// Runs a unit of work within this <see cref="IModule"/>
         /// </summary>
         /// <param name="cancellationToken"></param>

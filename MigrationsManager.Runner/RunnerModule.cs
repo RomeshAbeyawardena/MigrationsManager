@@ -43,7 +43,8 @@ namespace MigrationsManager.Runner
         private static IDbConnection ConfigureDbConnection(IServiceProvider serviceProvider)
         {
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            return serviceProvider.GetRequiredService<IDbConnectionFactory>().GetDbConnection(configuration.GetConnectionString("default"));
+            return serviceProvider.GetRequiredService<IDbConnectionFactory>()
+                .GetDbConnection(configuration.GetConnectionString("default"));
         }
 
         public RunnerModule(ILogger<RunnerModule> logger, IMigrationQueryBuilder migrationQueryBuilder)
