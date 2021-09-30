@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MigrationsManager.Extensions;
+using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Base;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
@@ -20,7 +21,8 @@ namespace MigrationsManager.Runner
 {
     public class RunnerModule : ModuleBase, IModule
     {
-        private readonly ILogger<RunnerModule> logger;
+        [Resolve]
+        private ILogger<RunnerModule> Logger { get; set; }
         private readonly IMigrationQueryBuilder migrationQueryBuilder;
 
         private static IMigrationOptions Build(IServiceProvider serviceProvider, IMigrationConfigurator migrationConfigurator)
@@ -47,9 +49,8 @@ namespace MigrationsManager.Runner
                 .GetDbConnection(configuration.GetConnectionString("default"));
         }
 
-        public RunnerModule(ILogger<RunnerModule> logger, IMigrationQueryBuilder migrationQueryBuilder)
+        public RunnerModule(IMigrationQueryBuilder migrationQueryBuilder)
         {
-            this.logger = logger;
             this.migrationQueryBuilder = migrationQueryBuilder;
         }
 
@@ -60,18 +61,17 @@ namespace MigrationsManager.Runner
                 .AddMigration("default", Build);
         }
 
-        public override Task Run(CancellationToken cancellationToken)
+        public override Task OnRun(CancellationToken cancellationToken)
         {
             var sw = new Stopwatch();
             sw.Start();
             var sql = migrationQueryBuilder.BuildMigrations("sql");
             sw.Stop();
-            logger.LogInformation("Build and sql generation took {0} to generate:\r\n\t{1}", sw.Elapsed, sql);
-
+            Logger.LogInformation("Build and sql generation took {0} to generate:\r\n\t{1}", sw.Elapsed, sql);
             return Task.CompletedTask;
         }
 
-        public override Task Stop(CancellationToken cancellationToken)
+        public override Task OnStop(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

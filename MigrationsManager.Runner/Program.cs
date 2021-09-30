@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MigrationsManager.Core.Defaults.Options;
 using MigrationsManager.Extensions;
+using MigrationsManager.Shared;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
@@ -29,16 +30,28 @@ namespace MigrationsManager.Runner
                     .AddJsonFile("app.settings.json").Build())
                 .AddLogging(c => c.AddConsole());
 
-            using var moduleStartup = services
+            using (var moduleStartup = services
                 .AddModules(b => b.ConfigureAssemblies(c =>
                 {
                     c.AddAssembly<Program>(new DefaultAssemblyOptions { Discoverable = true, OnStartup = true });
                     c.AddAssembly("*");
                 }))
-                .Build();
+                .Build())
+            {
 
+                moduleStartup.State.Subscribe(OnNext, OnError);
                 await moduleStartup.Run(CancellationToken.None);
+            }
+        }
 
+        private static void OnError(Exception obj)
+        {
+            Console.WriteLine($"Module error: {obj}");
+        }
+
+        private static void OnNext(ModuleEventArgs obj)
+        {
+            Console.WriteLine($"Module: {obj.ModuleInstance.GetType()}\r\nStateChanged: IsRunning {obj.IsRunning}");
         }
     }
 }

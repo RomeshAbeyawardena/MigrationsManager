@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reactive.Subjects;
+using MigrationsManager.Shared.Defaults;
 
 namespace MigrationsManager.Shared.Base
 {
@@ -14,12 +16,21 @@ namespace MigrationsManager.Shared.Base
     public abstract class ModuleBase : IModule
     {
         private readonly List<object> parameters;
-        public event EventHandler<ModuleEventArgs> Started;
-        public event EventHandler<ModuleEventArgs> Stopped;
+
+        protected readonly ISubject<ModuleEventArgs> moduleState;
+
+        public IObservable<ModuleEventArgs> State => moduleState;
+        
+        protected IModuleResult ReportError(Exception exception)
+        {
+            OnError(exception);
+            return DefaultModuleResult.Failed(exception);
+        }
 
         protected ModuleBase()
         {
             parameters = new List<object>();
+            moduleState = new Subject<ModuleEventArgs>();
         }
 
         public virtual void AddParameters(IEnumerable<object> parameters)
@@ -27,14 +38,22 @@ namespace MigrationsManager.Shared.Base
             this.parameters.AddRange(parameters);
         }
 
-        public virtual void OnStarted(ModuleEventArgs e)
+        public virtual void OnStarted(ModuleEventArgs e, CancellationToken cancellationToken)
         {
-            Started?.Invoke(this, e);
+            OnRun(cancellationToken);
+            moduleState.OnNext(e);
         }
 
-        public virtual void OnStopped(ModuleEventArgs e)
+        public virtual void OnStopped(ModuleEventArgs e, CancellationToken cancellationToken)
         {
-            Stopped?.Invoke(this, e);
+            OnStop(cancellationToken);
+            moduleState.OnNext(e);
+            moduleState.OnCompleted();
+        }
+
+        public virtual void OnError(Exception exception)
+        {
+            moduleState.OnError(exception);
         }
 
         /// <inheritdoc cref="IDisposable"/>
@@ -58,14 +77,20 @@ namespace MigrationsManager.Shared.Base
 
         public virtual Task Run(CancellationToken cancellationToken)
         {
-            OnStarted(new ModuleEventArgs());
+            OnStarted(new ModuleEventArgs(this, true), cancellationToken);
+            Result = DefaultModuleResult.Success(Result);
             return Task.CompletedTask;
         }
 
         public virtual Task Stop(CancellationToken cancellationToken)
         {
-            OnStopped(new ModuleEventArgs());
+            OnStopped(new ModuleEventArgs(this, false), cancellationToken);
             return Task.CompletedTask;
         }
+
+        public abstract Task OnRun(CancellationToken cancellationToken);
+        public abstract Task OnStop(CancellationToken cancellationToken);
+
+        public IModuleResult Result { get; protected set; }
     }
 }

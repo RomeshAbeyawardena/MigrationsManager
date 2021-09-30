@@ -6,6 +6,7 @@ using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,10 @@ namespace MigrationsManager.Core.Builders
         private readonly IDatabaseQueryBuilderFactory databaseQueryBuilderFactory;
         private readonly IMigrationManager migrationsManager;
         private IServiceScope scope;
-
+        private IDbConnection dbConnection;
         public DefaultMigrationQueryBuilder(
             IServiceProvider serviceProvider,
-            IDatabaseQueryBuilderFactory databaseQueryBuilderFactory, 
+            IDatabaseQueryBuilderFactory databaseQueryBuilderFactory,
             IMigrationManager migrationsManager)
         {
             this.serviceProvider = serviceProvider;
@@ -34,14 +35,15 @@ namespace MigrationsManager.Core.Builders
         {
             var queryBuilder = databaseQueryBuilderFactory.GetDatabaseQueryBuilder(dbType);
             var queryStringBuilder = new StringBuilder();
-            while(migrationsManager.TryTake(out var migrationOptions))
+            while (migrationsManager.TryTake(out var migrationOptions))
             {
                 scope = serviceProvider.CreateScope();
-                var dbConnection = migrationOptions.DbConnectionFactory(scope.ServiceProvider);
+                dbConnection = migrationOptions.DbConnectionFactory(scope.ServiceProvider);
+
                 dbConnection.Open();
                 var tableConfigurations = migrationOptions.TableConfiguration.Select(t => t.Value);
 
-                foreach(var tableConfiguration in tableConfigurations)
+                foreach (var tableConfiguration in tableConfigurations)
                 {
                     if (!dbConnection.ExecuteScalar<bool>(queryBuilder.TableExists(tableConfiguration)))
                     {
@@ -51,13 +53,14 @@ namespace MigrationsManager.Core.Builders
                     {
                         foreach (var column in tableConfiguration.DataColumns)
                         {
-                            if(!dbConnection.ExecuteScalar<bool>(queryBuilder.ColumnExists(tableConfiguration, column.Name)))
+                            if (!dbConnection.ExecuteScalar<bool>(queryBuilder.ColumnExists(tableConfiguration, column.Name)))
                             {
                                 queryStringBuilder.AppendLine(queryBuilder.CreateField(tableConfiguration, column));
                             }
                         }
                     }
                 }
+
             }
 
             return queryStringBuilder.ToString();
@@ -65,6 +68,7 @@ namespace MigrationsManager.Core.Builders
 
         public void Dispose()
         {
+            dbConnection?.Dispose();
             scope?.Dispose();
             GC.SuppressFinalize(this);
         }

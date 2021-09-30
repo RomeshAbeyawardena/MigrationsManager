@@ -13,15 +13,7 @@ namespace MigrationsManager.Shared.Contracts
     /// </summary>
     public interface IModule : IDisposable
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        event EventHandler<ModuleEventArgs> Started;
-        /// <summary>
-        /// 
-        /// </summary>
-        event EventHandler<ModuleEventArgs> Stopped;
-
+        IObservable<ModuleEventArgs> State { get; }
         /// <summary>
         /// Adds constructor parameters
         /// </summary>
@@ -39,5 +31,7 @@ namespace MigrationsManager.Shared.Contracts
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task Stop(CancellationToken cancellationToken);
+        
+        IModuleResult Result { get; }
     }
 }

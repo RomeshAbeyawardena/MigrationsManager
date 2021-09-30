@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MigrationsManager.Shared.Attributes;
+using MigrationsManager.Shared.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -44,6 +46,22 @@ namespace MigrationsManager.Shared.Extensions
                         property.SetValue(model, list);
                     }
                 }
+            }
+        }
+
+        public static void ResolveDependencies(this object value, IModuleServiceProvider moduleServiceProvider)
+        {
+            var valueType = value.GetType();
+            var properties = valueType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic);
+            foreach (var propertyOrField in properties)
+            {
+                if(propertyOrField.GetCustomAttribute<ResolveAttribute>() == null)
+                {
+                    continue;
+                }
+
+                var service = moduleServiceProvider.GetService(propertyOrField.PropertyType);
+                propertyOrField.SetValue(value, service);
             }
         }
 

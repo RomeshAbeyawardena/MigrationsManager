@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MigrationsManager.Shared.Base;
+using MigrationsManager.Shared.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,15 @@ namespace MigrationManager.TestDomainProject
             this.logger = logger;
         }
 
-        public override Task Run(CancellationToken cancellationToken)
+        public override Task OnRun(CancellationToken cancellationToken)
         {
             logger.LogInformation("Running"); ;
-            return base.Run(cancellationToken);
+            return Task.CompletedTask;
         }
 
-        public override Task Stop(CancellationToken cancellationToken)
+        public override Task OnStop(CancellationToken cancellationToken)
         {
-            return base.Stop(cancellationToken);
+            return Task.CompletedTask;
         }
     }
 }

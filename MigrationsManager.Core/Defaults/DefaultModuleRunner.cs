@@ -2,10 +2,12 @@
 using MigrationsManager.Shared.Attributes;
 using MigrationsManager.Shared.Base;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Defaults;
 using MigrationsManager.Shared.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -17,6 +19,7 @@ namespace MigrationsManager.Core.Defaults
     [RegisterService(ServiceLifetime.Transient)]
     public class DefaultModuleRunner : ModuleBase, IModuleRunner
     {
+        private readonly ISubject<IModuleResult> resultState;
         private readonly IServiceCollection services;
         private readonly IServiceProvider serviceProvider;
         private readonly IModuleOptions moduleOptions;
@@ -24,12 +27,13 @@ namespace MigrationsManager.Core.Defaults
         private IServiceProvider builtModuleServices;
         private IModuleServiceProvider moduleServiceProvider;
         private readonly Dictionary<Type, IModule> modulesCache;
-        
+        private readonly ITaskQueue moduleTaskQueue;
+        private readonly List<IDisposable> subscribers;
         private IModuleServiceProvider ModuleServiceProvider
         {
             get
             {
-                if(moduleServiceProvider == null)
+                if (moduleServiceProvider == null)
                 {
                     moduleServiceProvider = new DefaultModuleServiceProvider(serviceProvider, BuiltModuleServices);
                 }
@@ -38,17 +42,17 @@ namespace MigrationsManager.Core.Defaults
             }
         }
 
-        private IServiceProvider BuiltModuleServices 
-        { 
-            get 
+        private IServiceProvider BuiltModuleServices
+        {
+            get
             {
-                if(builtModuleServices == null)
+                if (builtModuleServices == null)
                 {
                     builtModuleServices = services.BuildServiceProvider();
                 }
-                
+
                 return builtModuleServices;
-            } 
+            }
         }
 
         private static IEnumerable<Type> GetModuleTypes(IEnumerable<Assembly> assemblies)
@@ -67,16 +71,21 @@ namespace MigrationsManager.Core.Defaults
 
             if (defaultConstructor == null)
             {
-                return Activator.CreateInstance(type) as IModule;
+                module = Activator.CreateInstance(type) as IModule;
+            }
+            else
+            {
+                var parameters = defaultConstructor.GetParameters()
+                    .Select(a => ModuleServiceProvider.GetRequiredService(a.ParameterType))
+                    .ToArray();
+
+                module = Activator.CreateInstance(type, parameters) as IModule;
+                module.AddParameters(parameters);
             }
 
-            var parameters = defaultConstructor.GetParameters()
-                .Select(a => ModuleServiceProvider.GetRequiredService(a.ParameterType))
-                .ToArray();
+            subscribers.Add(module.State.Subscribe(moduleState));
+            module.ResolveDependencies(moduleServiceProvider);
 
-            module = Activator.CreateInstance(type, parameters) as IModule;
-
-            module.AddParameters(parameters);
             return module;
         }
 
@@ -87,10 +96,15 @@ namespace MigrationsManager.Core.Defaults
             configureServicesMethod?.Invoke(null, new[] { services });
         }
 
+        public IObservable<IModuleResult> ResultState => resultState;
+
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)
         {
+            resultState = new Subject<IModuleResult>();
+            moduleTaskQueue = new DefaultTaskQueue<IModuleResult>();
             services = new ServiceCollection();
             modulesCache = new Dictionary<Type, IModule>();
+            subscribers = new List<IDisposable>();
             this.serviceProvider = serviceProvider;
             this.moduleOptions = moduleOptions;
         }
@@ -100,7 +114,7 @@ namespace MigrationsManager.Core.Defaults
             configureServices(services);
         }
 
-        public override async Task Run(CancellationToken cancellationToken)
+        public override async Task OnRun(CancellationToken cancellationToken)
         {
             services.AddSingleton(s => ModuleServiceProvider);
 
@@ -111,16 +125,21 @@ namespace MigrationsManager.Core.Defaults
 
             moduleTypes.ForEach(RegisterServices);
 
-            modules =  moduleTypes.Select(Activate);
+            modules = moduleTypes.Select(Activate);
+            var taskList = new List<Task>();
+            modules.ForEach(m => moduleTaskQueue.TryAdd(() => m.Run(cancellationToken)));
 
-            await Task.WhenAll(modules.Select(m => m.Run(cancellationToken)));
-            await Run(cancellationToken);
+            while (moduleTaskQueue.Dequeue(out var resultTask))
+            {
+                taskList.Add(resultTask?.Invoke());
+            }
+
+            await Task.WhenAll(taskList);
         }
 
-        public override async Task Stop(CancellationToken cancellationToken)
+        public override async Task OnStop(CancellationToken cancellationToken)
         {
             await Task.WhenAll(modules.Select(a => a.Stop(cancellationToken)));
-            await base.Stop(cancellationToken);
         }
 
         public override void Dispose(bool dispose)
@@ -128,6 +147,7 @@ namespace MigrationsManager.Core.Defaults
             if (dispose)
             {
                 modules.ForEach(m => m.Dispose());
+                subscribers.ForEach(m => m.Dispose());
             }
 
             base.Dispose(dispose);

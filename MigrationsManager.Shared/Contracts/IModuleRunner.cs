@@ -24,5 +24,7 @@ namespace MigrationsManager.Shared.Contracts
         /// </summary>
         /// <param name="configureServices"></param>
         void Configure(Action<IServiceCollection> configureServices);
+
+        IObservable<IModuleResult> ResultState { get; }
     }
 }

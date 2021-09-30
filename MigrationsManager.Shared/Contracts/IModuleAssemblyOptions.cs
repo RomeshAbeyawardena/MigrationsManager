@@ -13,14 +13,14 @@ namespace MigrationsManager.Shared.Contracts
     public interface IModuleAssemblyOptions
     {
         /// <summary>
-        /// Adds an assembly
+        /// Adds an assembly to discover <see cref="IModule">modules</see>
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="assemblyOptions"></param>
         /// <returns></returns>
         IModuleAssemblyOptions AddAssembly(Assembly assembly, IAssemblyOptions assemblyOptions);
         /// <summary>
-        /// Adds an assembly
+        /// Adds an assembly to discover <see cref="IModule">modules</see>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assemblyOptions"></param>

@@ -14,20 +14,21 @@ namespace MigrationsManager.Core.Defaults
     {
         private readonly IServiceCollection services;
         private readonly IModuleRunner moduleRunner;
-
+        private readonly IDisposable subscriber;
         public DefaultModuleStartup(IServiceCollection services, IModuleRunner moduleRunner)
         {
             this.services = services;
             this.moduleRunner = moduleRunner;
+            this.subscriber = moduleRunner.State.Subscribe(moduleState);
         }
 
-        public override Task Run(CancellationToken cancellationToken)
+        public override Task OnRun(CancellationToken cancellationToken)
         {            
             moduleRunner.Merge(services);
             return moduleRunner.Run(cancellationToken);
         }
 
-        public override Task Stop(CancellationToken cancellationToken)
+        public override Task OnStop(CancellationToken cancellationToken)
         {
             return moduleRunner.Stop(cancellationToken);
         }
@@ -35,8 +36,9 @@ namespace MigrationsManager.Core.Defaults
         public override void Dispose(bool dispose)
         {
             if(dispose)
-            { 
+            {
                 moduleRunner.Dispose();
+                subscriber.Dispose();
             }
             base.Dispose(dispose);
         }
