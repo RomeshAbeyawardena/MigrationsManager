@@ -7,6 +7,7 @@ using MigrationsManager.Shared.Base;
 using MigrationsManager.Shared.Contracts;
 using MigrationsManager.Shared.Contracts.Builders;
 using MigrationsManager.Shared.Contracts.Factories;
+using MigrationsManager.Shared.Defaults;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -63,6 +64,7 @@ namespace MigrationsManager.Runner
 
         public override Task OnRun(CancellationToken cancellationToken)
         {
+            SetResult(DefaultModuleResult.Failed(new InvalidOperationException(), true));
             var sw = new Stopwatch();
             sw.Start();
             var sql = migrationQueryBuilder.BuildMigrations("sql");

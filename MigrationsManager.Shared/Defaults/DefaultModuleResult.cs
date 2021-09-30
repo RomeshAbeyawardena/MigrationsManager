@@ -12,12 +12,13 @@ namespace MigrationsManager.Shared.Defaults
         public bool IsException => Exception != null;
         public object Result { get; }
         public static IModuleResult Success(object value = null) => new DefaultModuleResult(value);
-        public static IModuleResult Failed(Exception exception) => new DefaultModuleResult(exception);
+        public static IModuleResult Failed(Exception exception, bool haltable = false) => new DefaultModuleResult(null, exception, haltable);
 
-        public DefaultModuleResult(object result, Exception exception = null)
+        public DefaultModuleResult(object result, Exception exception = null, bool haltable = false)
         {
             Result = result;
             Exception = exception;
+            Haltable = haltable;
         }
 
         public DefaultModuleResult(Exception exception)
@@ -27,5 +28,7 @@ namespace MigrationsManager.Shared.Defaults
         }
 
         public Exception Exception { get; }
+
+        public bool Haltable { get; }
     }
 }

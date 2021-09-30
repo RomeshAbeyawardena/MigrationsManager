@@ -32,6 +32,6 @@ namespace MigrationsManager.Shared.Contracts
         /// <returns></returns>
         Task Stop(CancellationToken cancellationToken);
         
-        IModuleResult Result { get; }
+        IObservable<IModuleResult> ResultState { get; }
     }
 }

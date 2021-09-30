@@ -19,7 +19,7 @@ namespace MigrationsManager.Core.Defaults
     [RegisterService(ServiceLifetime.Transient)]
     public class DefaultModuleRunner : ModuleBase, IModuleRunner
     {
-        private readonly ISubject<IModuleResult> resultState;
+        private readonly CancellationTokenSource cancellationTokenSource;
         private readonly IServiceCollection services;
         private readonly IServiceProvider serviceProvider;
         private readonly IModuleOptions moduleOptions;
@@ -82,11 +82,26 @@ namespace MigrationsManager.Core.Defaults
                 module = Activator.CreateInstance(type, parameters) as IModule;
                 module.AddParameters(parameters);
             }
-
+            subscribers.Add(module.ResultState.Subscribe(OnNext, OnCompleted));
             subscribers.Add(module.State.Subscribe(moduleState));
             module.ResolveDependencies(moduleServiceProvider);
 
             return module;
+        }
+
+        private void OnCompleted(Exception obj)
+        {
+            throw obj;
+        }
+
+        private void OnNext(IModuleResult obj)
+        {
+            if(obj.IsException && obj.Haltable)
+            {
+                cancellationTokenSource.Cancel();
+            }
+
+            SetResult(obj);
         }
 
         private void RegisterServices(Type type)
@@ -96,11 +111,9 @@ namespace MigrationsManager.Core.Defaults
             configureServicesMethod?.Invoke(null, new[] { services });
         }
 
-        public IObservable<IModuleResult> ResultState => resultState;
-
         public DefaultModuleRunner(IServiceProvider serviceProvider, IModuleOptions moduleOptions)
         {
-            resultState = new Subject<IModuleResult>();
+            cancellationTokenSource = new CancellationTokenSource();
             moduleTaskQueue = new DefaultTaskQueue<IModuleResult>();
             services = new ServiceCollection();
             modulesCache = new Dictionary<Type, IModule>();
@@ -127,11 +140,11 @@ namespace MigrationsManager.Core.Defaults
 
             modules = moduleTypes.Select(Activate);
             var taskList = new List<Task>();
-            modules.ForEach(m => moduleTaskQueue.TryAdd(() => m.Run(cancellationToken)));
+            modules.ForEach(m => moduleTaskQueue.TryAdd((c) => m.Run(c)));
 
             while (moduleTaskQueue.Dequeue(out var resultTask))
             {
-                taskList.Add(resultTask?.Invoke());
+                taskList.Add(resultTask?.Invoke(cancellationTokenSource.Token));
             }
 
             await Task.WhenAll(taskList);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MigrationsManager.Shared.Base;
 using MigrationsManager.Shared.Contracts;
+using MigrationsManager.Shared.Defaults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,8 @@ namespace MigrationManager.TestDomainProject
 
         public override Task OnRun(CancellationToken cancellationToken)
         {
-            logger.LogInformation("Running"); ;
+            logger.LogInformation("Running");
+            
             return Task.CompletedTask;
         }
 

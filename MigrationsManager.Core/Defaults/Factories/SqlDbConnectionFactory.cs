@@ -22,6 +22,7 @@ namespace MigrationsManager.Core.Defaults.Factories
         public void Dispose()
         {
             dbConnection?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

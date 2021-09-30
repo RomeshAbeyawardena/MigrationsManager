@@ -5,15 +5,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MigrationsManager.Shared.Base
 {
     public abstract class BaseTaskQueue : ITaskQueue
     {
-        protected IProducerConsumerCollection<Func<Task>> Queue { get; }
+        protected IProducerConsumerCollection<Func<CancellationToken, Task>> Queue { get; }
 
-        protected BaseTaskQueue(IProducerConsumerCollection<Func<Task>> queue)
+        protected BaseTaskQueue(IProducerConsumerCollection<Func<CancellationToken, Task>> queue)
         {
             this.Queue = queue;
         }
@@ -24,7 +25,7 @@ namespace MigrationsManager.Shared.Base
 
         object ICollection.SyncRoot => Queue.SyncRoot;
 
-        void IProducerConsumerCollection<Func<Task>>.CopyTo(Func<Task>[] array, int index)
+        void IProducerConsumerCollection<Func<CancellationToken, Task>>.CopyTo(Func<CancellationToken, Task>[] array, int index)
         {
             Queue.CopyTo(array, index);
         }
@@ -34,9 +35,9 @@ namespace MigrationsManager.Shared.Base
             Queue.CopyTo(array, index);
         }
 
-        public abstract bool Dequeue(out Func<Task> task);
+        public abstract bool Dequeue(out Func<CancellationToken, Task> task);
 
-        IEnumerator<Func<Task>> IEnumerable<Func<Task>>.GetEnumerator()
+        IEnumerator<Func<CancellationToken, Task>> IEnumerable<Func<CancellationToken, Task>>.GetEnumerator()
         {
             return Queue.GetEnumerator();
         }
@@ -46,17 +47,17 @@ namespace MigrationsManager.Shared.Base
             return Queue.GetEnumerator();
         }
 
-        Func<Task>[] IProducerConsumerCollection<Func<Task>>.ToArray()
+        Func<CancellationToken, Task>[] IProducerConsumerCollection<Func<CancellationToken, Task>>.ToArray()
         {
             return Queue.ToArray();
         }
 
-        bool IProducerConsumerCollection<Func<Task>>.TryAdd(Func<Task> item)
+        bool IProducerConsumerCollection<Func<CancellationToken, Task>>.TryAdd(Func<CancellationToken, Task> item)
         {
             return Queue.TryAdd(item);
         }
 
-        bool IProducerConsumerCollection<Func<Task>>.TryTake(out Func<Task> item)
+        bool IProducerConsumerCollection<Func<CancellationToken, Task>>.TryTake(out Func<CancellationToken, Task> item)
         {
             return Queue.TryTake(out item);
         }

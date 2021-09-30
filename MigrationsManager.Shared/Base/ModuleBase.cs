@@ -16,7 +16,7 @@ namespace MigrationsManager.Shared.Base
     public abstract class ModuleBase : IModule
     {
         private readonly List<object> parameters;
-
+        private readonly ISubject<IModuleResult> resultState;
         protected readonly ISubject<ModuleEventArgs> moduleState;
 
         public IObservable<ModuleEventArgs> State => moduleState;
@@ -29,8 +29,14 @@ namespace MigrationsManager.Shared.Base
 
         protected ModuleBase()
         {
+            resultState = new Subject<IModuleResult>();
             parameters = new List<object>();
             moduleState = new Subject<ModuleEventArgs>();
+        }
+
+        protected void SetResult(IModuleResult result)
+        {
+            resultState.OnNext(result);
         }
 
         public virtual void AddParameters(IEnumerable<object> parameters)
@@ -38,13 +44,13 @@ namespace MigrationsManager.Shared.Base
             this.parameters.AddRange(parameters);
         }
 
-        public virtual void OnStarted(ModuleEventArgs e, CancellationToken cancellationToken)
+        protected virtual void OnStarted(ModuleEventArgs e, CancellationToken cancellationToken)
         {
             OnRun(cancellationToken);
             moduleState.OnNext(e);
         }
 
-        public virtual void OnStopped(ModuleEventArgs e, CancellationToken cancellationToken)
+        protected virtual void OnStopped(ModuleEventArgs e, CancellationToken cancellationToken)
         {
             OnStop(cancellationToken);
             moduleState.OnNext(e);
@@ -77,8 +83,12 @@ namespace MigrationsManager.Shared.Base
 
         public virtual Task Run(CancellationToken cancellationToken)
         {
+            if(cancellationToken.IsCancellationRequested)
+            {
+                return Task.CompletedTask;
+            }
+
             OnStarted(new ModuleEventArgs(this, true), cancellationToken);
-            Result = DefaultModuleResult.Success(Result);
             return Task.CompletedTask;
         }
 
@@ -91,6 +101,6 @@ namespace MigrationsManager.Shared.Base
         public abstract Task OnRun(CancellationToken cancellationToken);
         public abstract Task OnStop(CancellationToken cancellationToken);
 
-        public IModuleResult Result { get; protected set; }
+        public IObservable<IModuleResult> ResultState => resultState;
     }
 }
