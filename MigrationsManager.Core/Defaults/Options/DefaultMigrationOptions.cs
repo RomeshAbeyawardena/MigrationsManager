@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace MigrationsManager.Core.Options
+namespace DNI.ModuleLoader.Core.Options
 {
     public class DefaultMigrationOptions : IMigrationOptions
     {

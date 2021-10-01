@@ -64,7 +64,6 @@ namespace MigrationsManager.Runner
 
         public override Task OnRun(CancellationToken cancellationToken)
         {
-            SetResult(DefaultModuleResult.Failed(new InvalidOperationException(), true));
             var sw = new Stopwatch();
             sw.Start();
             var sql = migrationQueryBuilder.BuildMigrations("sql");

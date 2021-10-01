@@ -44,20 +44,20 @@ namespace MigrationsManager.Shared.Base
             this.parameters.AddRange(parameters);
         }
 
-        protected virtual void OnStarted(ModuleEventArgs e, CancellationToken cancellationToken)
+        protected void OnStarted(ModuleEventArgs e, CancellationToken cancellationToken)
         {
             OnRun(cancellationToken);
             moduleState.OnNext(e);
         }
 
-        protected virtual void OnStopped(ModuleEventArgs e, CancellationToken cancellationToken)
+        protected void OnStopped(ModuleEventArgs e, CancellationToken cancellationToken)
         {
             OnStop(cancellationToken);
             moduleState.OnNext(e);
             moduleState.OnCompleted();
         }
 
-        public virtual void OnError(Exception exception)
+        public void OnError(Exception exception)
         {
             moduleState.OnError(exception);
         }
@@ -81,7 +81,7 @@ namespace MigrationsManager.Shared.Base
             GC.SuppressFinalize(this);
         }
 
-        public virtual Task Run(CancellationToken cancellationToken)
+        public Task Run(CancellationToken cancellationToken)
         {
             if(cancellationToken.IsCancellationRequested)
             {
@@ -92,7 +92,7 @@ namespace MigrationsManager.Shared.Base
             return Task.CompletedTask;
         }
 
-        public virtual Task Stop(CancellationToken cancellationToken)
+        public Task Stop(CancellationToken cancellationToken)
         {
             OnStopped(new ModuleEventArgs(this, false), cancellationToken);
             return Task.CompletedTask;
